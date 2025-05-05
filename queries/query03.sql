@@ -46,3 +46,10 @@ SELECT * FROM doit_dml;
 INSERT INTO doit_dml (col_1, col_3, col_2) 
 VALUES (4, '2025-05-07', '열 순서 변경');
 SELECT * FROM doit_dml;
+
+-- 여러 데이터 한 번에 삽입
+INSERT INTO doit_dml (col_1, col_2, col_3) 
+VALUES (5, '데이터 입력5', '2025-05-08'), 
+(6, '데이터 입력6', '2025-05-08'), 
+(7, '데이터 입력7', '2025-05-08');
+SELECT * FROM doit_dml;
