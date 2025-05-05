@@ -62,3 +62,12 @@ WHERE col_1 = 4;
 -- 안전모드를 비활성화 한 후 workbench 종료한 뒤 실행하여 
 -- 다시 UPDATE 쿼리문 실행하기.
 SELECT * FROM doit_dml;
+
+-- 안전 모드 활성화
+set SQL_SAFE_UPDATES=1;
+-- 안전 모드 비활성화
+set SQL_SAFE_UPDATES=0;
+
+-- UPDATE문으로 테이블 전체 데이터 수정
+UPDATE doit_dml SET col_1 = col_1 + 10;
+SELECT * FROM doit_dml;
