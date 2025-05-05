@@ -1,12 +1,14 @@
 -- 쿼리 실행 단축키? Ctrl + Enter
 -- 데이터베이스에선 항상 대소문자를 잘 구분해서 참조할 것.
+-- Workbench를 껐다 켜도, 다시 쿼리 실행 시 자동으로 데이터베이스를 지정
+USE doitsql;
+
 CREATE DATABASE DoItSQL;
 DROP DATABASE DoItSQL;
 -- 실무에서는 여러 프로그램들이 데이터베이스에 접속해 사용하는 경우가 많아서
 -- 데이터베이스를 삭제하는 일은 드물다.
 
 CREATE DATABASE doitsql;
-USE doitsql;
 
 -- 테이블 생성
 CREATE TABLE doit_create_table (
@@ -52,4 +54,11 @@ INSERT INTO doit_dml (col_1, col_2, col_3)
 VALUES (5, '데이터 입력5', '2025-05-08'), 
 (6, '데이터 입력6', '2025-05-08'), 
 (7, '데이터 입력7', '2025-05-08');
+SELECT * FROM doit_dml;
+
+-- 데이터 수정
+UPDATE doit_dml SET col_2 = '데이터 수정' 
+WHERE col_1 = 4;
+-- 안전모드를 비활성화 한 후 workbench 종료한 뒤 실행하여 
+-- 다시 UPDATE 쿼리문 실행하기.
 SELECT * FROM doit_dml;
