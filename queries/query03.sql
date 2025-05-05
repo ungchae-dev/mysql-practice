@@ -81,3 +81,13 @@ SELECT * FROM doit_dml;
 -- 테이블 전체 데이터 삭제
 DELETE FROM doit_dml;
 SELECT * FROM doit_dml;
+
+# 한 줄 주석
+-- 한 줄 주석
+/*
+여러줄
+주석
+*/
+
+-- /*! 실행 가능한 주석 코드 작성 */
+SELECT 1/*!+1 */
