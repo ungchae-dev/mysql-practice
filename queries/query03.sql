@@ -28,3 +28,6 @@ CREATE TABLE doit_dml (
 -- 데이터 삽입
 INSERT INTO doit_dml (col_1, col_2, col_3) 
 VALUES (1, 'DoItSQL', '2025-05-05');
+
+-- 데이터 조회하여 삽입한 데이터 확인
+SELECT * FROM doit_dml;
