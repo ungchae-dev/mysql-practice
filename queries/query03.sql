@@ -77,3 +77,7 @@ SELECT * FROM doit_dml;
 -- DELETE문으로 데이터 삭제
 DELETE FROM doit_dml WHERE col_1 = 14;
 SELECT * FROM doit_dml;
+
+-- 테이블 전체 데이터 삭제
+DELETE FROM doit_dml;
+SELECT * FROM doit_dml;
