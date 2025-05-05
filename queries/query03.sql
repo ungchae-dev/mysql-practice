@@ -71,3 +71,9 @@ set SQL_SAFE_UPDATES=0;
 -- UPDATE문으로 테이블 전체 데이터 수정
 UPDATE doit_dml SET col_1 = col_1 + 10;
 SELECT * FROM doit_dml;
+
+-- ※ DELETE문은 FROM이 반드시 필요하고, 
+-- WHERE절의 조건이 누락되면 전체 데이터를 삭제하므로 주의할 것!
+-- DELETE문으로 데이터 삭제
+DELETE FROM doit_dml WHERE col_1 = 14;
+SELECT * FROM doit_dml;
