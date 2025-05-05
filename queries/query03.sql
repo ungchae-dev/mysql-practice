@@ -41,3 +41,8 @@ INSERT INTO doit_dml (col_1, col_2)
 VALUES (3, 'col_3 값 생략');
 SELECT * FROM doit_dml;
 -- col_3에는 NULL이 담긴다.
+
+-- 삽입할 데이터의 순서 변경
+INSERT INTO doit_dml (col_1, col_3, col_2) 
+VALUES (4, '2025-05-07', '열 순서 변경');
+SELECT * FROM doit_dml;
