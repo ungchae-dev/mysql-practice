@@ -5,3 +5,4 @@ DROP DATABASE DoItSQL;
 -- 실무에서는 여러 프로그램들이 데이터베이스에 접속해 사용하는 경우가 많아서
 -- 데이터베이스를 삭제하는 일은 드물다.
 
+CREATE DATABASE doitsql;
