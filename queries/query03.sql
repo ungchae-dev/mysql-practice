@@ -29,9 +29,15 @@ CREATE TABLE doit_dml (
 INSERT INTO doit_dml (col_1, col_2, col_3) 
 VALUES (1, 'DoItSQL', '2025-05-05');
 
--- 데이터 조회하여 삽입한 데이터 확인
-SELECT * FROM doit_dml;
-
 -- 열 이름 생략하고 데이터 삽입
 INSERT INTO doit_dml 
 VALUES (2, '열 이름 생략', '2025-05-06');
+
+-- 삽입한 데이터 조회
+SELECT * FROM doit_dml;
+
+-- 특정 열에만 데이터 삽입 & 데이터 조회
+INSERT INTO doit_dml (col_1, col_2) 
+VALUES (3, 'col_3 값 생략');
+SELECT * FROM doit_dml;
+-- col_3에는 NULL이 담긴다.
