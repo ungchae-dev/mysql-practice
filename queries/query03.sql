@@ -24,3 +24,7 @@ CREATE TABLE doit_dml (
     col_2 VARCHAR(50), 
     col_3 DATETIME
 );
+
+-- 데이터 삽입
+INSERT INTO doit_dml (col_1, col_2, col_3) 
+VALUES (1, 'DoItSQL', '2025-05-05');
