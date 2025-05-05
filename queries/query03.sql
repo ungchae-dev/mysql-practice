@@ -14,3 +14,6 @@ CREATE TABLE doit_create_table (
     col_2 VARCHAR(50), 
     col_3 DATETIME
 );
+
+-- 테이블 삭제
+DROP TABLE doit_create_table;
