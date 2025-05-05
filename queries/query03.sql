@@ -17,3 +17,10 @@ CREATE TABLE doit_create_table (
 
 -- 테이블 삭제
 DROP TABLE doit_create_table;
+
+-- 테이블 생성_2
+CREATE TABLE doit_dml (
+	col_1 INT, 
+    col_2 VARCHAR(50), 
+    col_3 DATETIME
+);
