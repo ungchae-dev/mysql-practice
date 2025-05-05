@@ -6,3 +6,11 @@ DROP DATABASE DoItSQL;
 -- 데이터베이스를 삭제하는 일은 드물다.
 
 CREATE DATABASE doitsql;
+USE doitsql;
+
+-- 테이블 생성
+CREATE TABLE doit_create_table (
+	col_1 INT, 
+    col_2 VARCHAR(50), 
+    col_3 DATETIME
+);
