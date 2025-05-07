@@ -16,3 +16,7 @@ INSERT INTO doit_increment (col_2, col_3) VALUES ('1 자동 입력', 1);
 INSERT INTO doit_increment (col_2, col_3) VALUES ('2 자동 입력', 2);
 
 SELECT * FROM doit_increment;
+
+-- 자동 입력되는 값과 동일한 값을 입력한 경우
+INSERT INTO doit_increment (col_1, col_2, col_3) VALUES (3, '3 자동 입력', 3);
+SELECT * FROM doit_increment;
