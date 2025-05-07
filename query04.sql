@@ -15,3 +15,7 @@ SELECT * FROM customer;
 -- :테이블의 구조(schema)를 확인할 때 사용하는 쿼리
 -- customer 테이블의 열 정보 조회
 SHOW COLUMNS FROM sakila.customer;
+
+-- WHERE 절, = 연산자로 특정 값 조회
+SELECT * FROM customer
+WHERE first_name = 'MARIA';
