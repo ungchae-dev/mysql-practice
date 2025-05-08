@@ -69,3 +69,28 @@ WHERE first_name BETWEEN 'M' AND 'O';
 -- customer 테이블에서 first_name 열에서 M~O 범위의 값을 제외한 데이터 조회
 SELECT * FROM customer 
 WHERE first_name NOT BETWEEN 'M' AND 'O';
+
+-- ...
+-- AND와 OR을 이용한 데이터 조회하기
+-- city 테이블에서 city 열이 'Sunnyvale'이면서 
+-- country_id 열이 103인 데이터 조회
+SELECT * FROM city 
+WHERE city = 'Sunnyvale' AND country_id = 103;
+
+-- payment 테이블에서 날짜(payment_date)가 
+-- 2005년 6월 1일부터 2005년 7월 5일까지 포함하는 데이터 조회
+SELECT * FROM payment 
+WHERE payment_date >= '2005-06-01' AND payment_date <= '2005-07-05';
+
+-- customer 테이블에서 first_name 열에서 'MARIA' 또는 'LINDA'인 데이터 조회
+SELECT * FROM customer 
+WHERE first_name = 'MARIA' OR first_name = 'LINDA';
+
+-- customer 테이블에서 OR을 2개 이상 사용한 경우의 쿼리
+SELECT * FROM customer 
+WHERE first_name = 'MARIA' OR first_name = 'LINDA' OR first_name = 'NANCY';
+
+-- 위 쿼리문 개선 => customer 테이블에서 IN을 활용한 데이터 조회
+SELECT * FROM customer 
+WHERE first_name IN ('MARIA','LINDA','NANCY');
+
