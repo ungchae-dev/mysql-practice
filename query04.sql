@@ -48,3 +48,24 @@ WHERE payment_date = '2005-07-09 13:24:07';
 SELECT * FROM payment 
 WHERE payment_date < '2005-07-09';
 -- WHERE 절에서 비교 연산자 사용 Fin.
+
+-- WHERE절에서 논리 연산자 사용하기
+-- customer 테이블에서 BETWEEN을 통한 데이터 조회
+SELECT * FROM customer 
+WHERE address_id BETWEEN 5 AND 10;
+
+-- payment 테이블에서 2005년 6월 17일 ~ 2005년 7월 19일을 포함한 날짜로 전체 데이터 조회
+SELECT * FROM payment 
+WHERE payment_date BETWEEN '2005-06-17' AND '2005-07-19';
+
+-- payment 테이블에서 2005년 7월 8일 오전 7시 33분 56초의 날짜로 전체 데이터 조회
+SELECT * FROM payment 
+WHERE payment_date = '2005-07-08 07:33:56';
+
+-- customer 테이블에서 first_name 열에서 M~O 범위의 데이터 조회(M, N, O)
+SELECT * FROM customer 
+WHERE first_name BETWEEN 'M' AND 'O';
+
+-- customer 테이블에서 first_name 열에서 M~O 범위의 값을 제외한 데이터 조회
+SELECT * FROM customer 
+WHERE first_name NOT BETWEEN 'M' AND 'O';
