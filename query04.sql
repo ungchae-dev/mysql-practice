@@ -94,3 +94,35 @@ WHERE first_name = 'MARIA' OR first_name = 'LINDA' OR first_name = 'NANCY';
 SELECT * FROM customer 
 WHERE first_name IN ('MARIA','LINDA','NANCY');
 
+-- city 테이블에서 country_id 열이 103 또는 country_id 열이 86이면서 
+-- city 열이 'Cheju', 'Sunnyvale', 'Dallas'인 데이터 조회
+SELECT * FROM city 
+WHERE country_id = 103 OR country_id = 86 
+	AND city IN ('Cheju', 'Sunnyvale', 'Dallas');
+-- 논리 연산자의 우선순위는 OR보다 AND가 '높다'.
+-- 쿼리 실행 순서 1
+-- SELECT * FROM city WHERE country_id = 103;
+-- 쿼리 실행 순서 2
+-- SELECT * FROM city 
+-- WHERE country_id = 86
+-- 	AND city IN ('Cheju', 'Sunnyvale', 'Dallas');
+
+-- 만약에 WHERE 조건절에서 103과 86의 순서가 바뀐다면 쿼리 결과는 어떻게 될까?
+SELECT * FROM city 
+WHERE country_id = 86 OR country_id = 103 
+	AND city IN ('Cheju', 'Sunnyvale', 'Dallas');
+    
+-- 원하는 결과를 도출하려면?
+-- () 소괄호 사용!
+-- city 테이블에서 소괄호로 우선순위를 다시 정해 전체 데이터 조회
+SELECT * FROM city 
+WHERE (country_id = 103 OR country_id = 86) 
+	AND city IN ('Cheju', 'Sunnyvale', 'Dallas');
+
+-- city 테이블에서 IN, AND를 결합해 전체 데이터 조회
+SELECT * FROM city 
+WHERE country_id IN (103, 86) 
+	AND city IN ('Cheju', 'Sunnyvale', 'Dallas');
+-- 결국, 어떤 결과를 얻기 위한 코드에 정답은 없다.
+-- 좋은 코드 또는 좋은 쿼리란 가독성이 좋으면서 
+-- 요구사항을 정확히 반영하고 성능도 효율적인 거니까.
