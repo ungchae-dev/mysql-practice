@@ -145,3 +145,47 @@ WHERE address2 IS NOT NULL;
 -- address 테이블에서 address2 열이 공백인 행 조회
 SELECT * FROM address 
 WHERE address2 = '';
+
+-- ...
+-- ORDER BY 절로 데이터 정렬하기
+-- SELECT [column] FROM [table] 
+-- WHERE [column] = [condition] ORDER BY [column] [ASC or DESC]
+-- ORDER BY: 조회한 데이터를 정렬하기 위한 구문
+-- [column]: 정렬할 열 이름을 입력
+-- [ASC or DESC]: 정렬 기준, 오름차순(ASC) 또는 내림차순(DESC(descending))
+-- 생략 시 default는 오름차순(ASC(ascending))
+-- ...
+-- customer 테이블에서 first_name 열 기준으로 오름차순 정렬하여 모든 데이터 조회
+SELECT * FROM customer 
+ORDER BY first_name;
+
+-- customer 테이블에서 last_name 열 기준으로 오름차순 정렬하여 모든 데이터 조회
+SELECT * FROM customer 
+ORDER BY last_name;
+
+-- ※ 2개 이상의 열 기준으로 정렬 시 쉼표를 사용해 열 이름을 나열한다.
+-- 이 때, 입력 순서에 따라 정렬 우선순위가 정해진다.
+-- customer 테이블에서 store_id, first_name 순으로 모든 데이터를 오름차순 정렬해 조회하면?
+SELECT * FROM customer 
+ORDER BY store_id, first_name;
+-- 먼저 store_id 열 기준 정렬한 다음, store_id 열에 같은 값이 있는 경우 
+-- first_name 열을 기준으로 데이터를 오름차순 정렬한다.
+
+-- 반대로 customer 테이블에서 first_name, store_id 순으로 모든 데이터를 오름차순 정렬해 조회하면?
+SELECT * FROM customer 
+ORDER BY first_name, store_id;
+-- first_name 열 기준으로 먼저 오름차순 정렬 후, 다음 store_id 열 기준에 따라 데이터를 오름차순 정렬한다.
+
+-- customer 테이블에서 first_name 열에 대해 모든 데이터를 오름차순 정렬하면? (ASC 사용할 것!)
+SELECT * FROM customer 
+ORDER BY first_name ASC;
+
+-- 반대로 customer 테이블에서 first_name 열에 대해 모든 데이터를 내림차순 정렬하면?
+SELECT * FROM customer 
+ORDER BY first_name DESC;
+
+-- customer 테이블에서 먼저 store_id 열을 내림차순, first_name 열을 오름차순하여 모든 데이터를 정렬하면?
+SELECT * FROM customer 
+ORDER BY store_id DESC, first_name ASC;
+-- 입력 순으로 정렬 우선순위가 정해지므로 store_id 열을 먼저 내림차순 정렬한 후,
+-- 같은 데이터가 있는 경우 first_name 열을 오름차순 정렬한다.
