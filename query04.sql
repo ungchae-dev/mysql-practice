@@ -189,3 +189,34 @@ SELECT * FROM customer
 ORDER BY store_id DESC, first_name ASC;
 -- 입력 순으로 정렬 우선순위가 정해지므로 store_id 열을 먼저 내림차순 정렬한 후,
 -- 같은 데이터가 있는 경우 first_name 열을 오름차순 정렬한다.
+
+-- LIMIT로 상위 데이터 조회하기
+-- 특정 조건에 해당하는 데이터 중 상위 N개의 데이터만 보고 싶을 경우
+-- SELECT 문에 LIMIT를 조합하면 된다.
+-- ex) SELECT [column] FROM [table] ORDER BY [column] [ASC/DESC] LIMIT 10과 같이
+-- LIMIT 다음에 조회하려는 행의 개수를 입력하면 된다.
+-- ...
+-- Q. customer 테이블에서 store_id는 내림차순으로, first_name은 오름차순으로 정렬 후, 
+-- 상위 10개의 데이터를 조회하는 쿼리는?
+SELECT * FROM customer 
+ORDER BY store_id DESC, first_name ASC LIMIT 10;
+-- 상위 N개 데이터 조회 시, 특히 ORDER BY 절을 사용하는 게 좋다.
+-- 만약 정렬하지 않으면 어떤 값을 기준으로 정렬해 상위 N개의 데이터를 조회했는지 알 수 없기 때문이다.
+
+-- 범위를 지정해 데이터 조회하기
+-- LIMIT에 N1, N2라는 매개변수를 입력하면 상위 N1 다음 행부터 N2개의 행을 조회한다.
+-- ...
+-- customer 테이블에서 customer_id 열을 기준으로 오름차순한 뒤, 101번째 행부터 10개 행을 조회하는 쿼리는?
+SELECT * FROM customer 
+ORDER BY customer_id ASC LIMIT 100, 10;
+
+-- OFFSET으로 특정 구간의 데이터 조회하기
+-- ORDER BY 절로 데이터 정렬 후, 상위나 하위가 아닌 특정 구간의 데이터를 조회해야 할 때는 어떻게 할까?
+-- LIMIT N2 OFFSET N1과 같이 작성하여
+-- 데이터 N1개를 건너뛰고 N1+1번째 데이터부터 행 N2개를 조회하는 식으로 쓸 수 있다.
+-- ※ OFFSET 사용 시 반드시 LIMIT와 함께 사용한다. ex) ... LIMIT N2 OFFSET N1
+-- ...
+-- customer 테이블에서 customer_id 열을 기준으로 오름차순 정렬 후, 
+-- 데이터 100개를 건너뛰고 101번째 데이터부터 10개를 조회하는 쿼리는?
+SELECT * FROM customer 
+ORDER BY customer_id ASC LIMIT 10 OFFSET 100;
