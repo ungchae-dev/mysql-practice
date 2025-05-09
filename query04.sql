@@ -126,3 +126,22 @@ WHERE country_id IN (103, 86)
 -- 결국, 어떤 결과를 얻기 위한 코드에 정답은 없다.
 -- 좋은 코드 또는 좋은 쿼리란 가독성이 좋으면서 
 -- 요구사항을 정확히 반영하고 성능도 효율적인 거니까.
+
+-- address 테이블에서 NULL이 있는 데이터 조회
+SELECT * FROM address;
+
+-- = 연산자를 사용해 NULL 데이터 조회
+SELECT * FROM address WHERE address2 = NULL;
+-- NULL은 정의되지 않은 값이므로 일반적인 연산자로 조회 불가
+
+-- address 테이블에서 address2 열이 NULL인 데이터 조회
+SELECT * FROM address 
+WHERE address2 IS NULL;
+
+-- address 테이블에서 address2 열이 NULL이 아닌 데이터 조회
+SELECT * FROM address 
+WHERE address2 IS NOT NULL;
+
+-- address 테이블에서 address2 열이 공백인 행 조회
+SELECT * FROM address 
+WHERE address2 = '';
