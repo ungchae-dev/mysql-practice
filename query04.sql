@@ -253,3 +253,48 @@ SELECT * FROM customer WHERE first_name LIKE '%A%';
 
 -- customer 테이블의 first_name 열에서 A로 시작하는 문자열을 제외한 모든 데이터를 조회하면?
 SELECT * FROM customer WHERE first_name NOT LIKE 'A%';
+
+-- ...
+-- ESCAPE로 특수 문자를 포함한 데이터 조회하기
+-- %는 '예약어'이므로 %%와 같이 입력하는 식으로는 검색할 수 없음.
+-- 예약어란?
+-- 프로그래밍 언어에서 이미 문법으로 사용하고 있는 단어로, 
+-- 이미 선점(예약)해서 사용되고 있는 단어.
+-- 프로그래밍 언어마다 에약어의 종류는 다름.
+
+-- 공통 테이블 표현식을 통한 테이블 생성(실제 테이블 생성이 아님)
+-- 특수 문자를 포함한 임의의 테이블 생성
+-- WITH CTE (col_1) AS (
+-- SELECT 'A%BC' UNION ALL 
+-- SELECT 'A_BC' UNION ALL 
+-- SELECT 'ABC'
+-- )
+-- SELECT * FROM CTE; 
+-- 반드시 뒤에 SELECT, INSERT, UPDATE, DELETE 같은 주 쿼리(main query)가 따라와야한다.
+
+-- SELECT * FROM CTE WHERE col_1 LIKE '%';
+-- %는 검색할 수 있는 값이 아닌, 0개 이상의 문자를 의미하는 예약어이기 때문에 이같은 결과가 발생함.
+-- % 기호가 포함된 A%BC 데이터를 조회하려면 어떻게 해야 할까?
+-- WITH CTE (col_1) AS (
+-- SELECT 'A%BC' UNION ALL 
+-- SELECT 'A_BC' UNION ALL 
+-- SELECT 'ABC'
+-- )
+-- SELECT * FROM CTE WHERE col_1 LIKE '%#%%' ESCAPE '#';
+-- %를 포함한 쿼리문이 될 수 있는 이유는?
+-- 쿼리 실행 시 ESCAPE이 #을 제거하고, 
+-- 쿼리 명령 단계에선 %#%%가 호출되고 실제 실행 시 %%%로 해석된다.
+-- 따라서 %를 포함하는 앞,뒤 어떤 문자가 와도 상관없는 데이터를 조회하는 것.
+
+-- ESCAPE에 사용할 특수문자는 # 외에 &, !, / 등 여러 가지를 쓸 수 있다.
+WITH CTE (col_1) AS (
+SELECT 'A%BC' UNION ALL 
+SELECT 'A_BC' UNION ALL 
+SELECT 'ABC'
+)
+-- ESCAPE과 !로 특수문자 %를 포함한 데이터 조회
+-- SELECT * FROM CTE WHERE col_1 LIKE '%!%%' ESCAPE '!'; 
+-- 명령어가 전달될 때
+SELECT * FROM CTE WHERE col_1 LIKE '%!%%' ESCAPE '!';
+-- 데이터베이스 엔진이 SQL 명령을 수행할 때
+-- SELECT * FROM CTE WHERE col_1 LIKE '%%%';
