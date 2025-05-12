@@ -334,3 +334,42 @@ SELECT * FROM customer WHERE first_name LIKE '__R%';
 
 -- customer 테이블의 first_name 열에서 A로 시작하고 R과 함께 마지막 한 글자가 더있는 문자열을 모두 조회하면?
 SELECT * FROM customer WHERE first_name LIKE 'A%R_';
+
+-- REGEXP(regular expression)으로 더 다양하게 데이터 조회하기
+-- regular expression: 정규 표현식 => 앞 세 글자씩 따서 REGEXP로 표현.
+-- 정규 표현식은 특정 패턴의 문자열을 표현하기 위해 사용.
+
+-- MySQL에서 지원하는 정규 표현식 (표현식 : 설명)
+-- . : 줄 바꿈 문자(\n)를 제외한 임의의 한 문자를 의미
+-- * : 해당 문자 패턴이 0번 이상 반복
+-- + : 해당 문자 패턴이 1번 이상 반복
+-- ^ : 문자열의 처음을 의미
+-- $ : 문자열의 끝을 의미
+-- | : OR을 의미
+-- [...] : 대괄호[] 안에 있는 어떠한 문자를 의미
+-- [^...] : 대괄호[] 안에 있지 않은 어떠한 문자를 의미
+-- {n} : 반복되는 횟수를 지정
+-- {m,n} : 반복되는 횟수의 최솟값과 최댓값을 지정
+
+-- 정규 표현식을 사용해 customer 테이블의 first_name 열에서 
+-- K로 시작하거나 N으로 끝나는 모든 데이터를 조회하면?
+SELECT * FROM customer WHERE first_name REGEXP '^K|N$';
+
+-- 정규 표현식을 사용해 customer 테이블의 first_name 열에서
+-- K와 함께 L과 N 사이의 문자를 포함한 데이터를 모두 조회하면?
+SELECT * FROM customer WHERE first_name REGEXP 'K[L-N]';
+
+-- 정규 표현식을 사용해 customer 테이블의 first_name 열에서 
+-- K와 함께 L과 N 사이의 문자를 포함하지 않는 데이터를 모두 조회하면?
+SELECT * FROM customer WHERE first_name REGEXP 'K[^L-N]';
+
+-- 와일드카드 더 활용해 보기 (와일드카드를 잘 조합하면 원하는 대로 데이터를 조회할 수 있다.)
+-- customer 테이블의 first_name 열에서 S로 시작하는 문자열 데이터 중에 
+-- A 뒤에 L과 N 사이의 문자가 있는 데이터를 모두 조회하면?
+SELECT * FROM customer WHERE first_name LIKE 'S%' AND first_name REGEXP 'A[L-N]';
+
+-- customer 테이블의 first_name 열에서 총 7글자이고, 
+-- A 뒤에 L과 N 사이의 글자가 있고, 마지막 글자는 O인 문자열 데이터를 모두 조회하면?
+SELECT * FROM customer WHERE first_name LIKE '_______' 
+AND first_name REGEXP 'A[L-N]' 
+AND first_name REGEXP 'O$';
