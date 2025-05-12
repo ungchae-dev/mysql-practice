@@ -298,3 +298,29 @@ SELECT 'ABC'
 SELECT * FROM CTE WHERE col_1 LIKE '%!%%' ESCAPE '!';
 -- 데이터베이스 엔진이 SQL 명령을 수행할 때
 -- SELECT * FROM CTE WHERE col_1 LIKE '%%%';
+
+-- LIKE와 _로 길이가 정해진 데이터 조회하기
+-- 특정 문자열을 포함하면서 문자열의 길이도 정해 데이터를 검색하려면 어떻게 할까?
+-- underscore (_)를 사용한다.
+-- %만 사용하면 검색된 데이터의 양이 많아 원하는 데이터를 빨리 찾지 못할 때가 있다.
+-- 이 때, 찾으려는 문자열 일부와 문자열의 길이를 알고 있다면 _를 사용하자.
+
+-- _의 사용 예)
+-- A_: A로 시작하면서 뒷 글자는 무엇이든 상관없음. 전체 글자 수는 2개인 문자열.
+-- _A: A로 끝나면서 앞의 문자는 무엇이든 상관없음. 전체 글자 수는 2개인 문자열.
+-- _A_: 3글자로 된 문자열 중 가운데 글자만 A이며 앞,뒤로는 무엇이든 상관없는 문자열.
+-- ...
+-- customer 테이블의 first_name 열에서 A로 시작하면서 뒤의 글자가 하나 있는 문자열을 모두 조회하면?
+SELECT * FROM customer WHERE first_name LIKE 'A_';
+
+-- customer 테이블의 first_name 열에서 A로 시작하면서 문자열 길이가 3인 데이터를 모두 조회하면?
+SELECT * FROM customer WHERE first_name LIKE 'A__';
+
+-- 반대로 customer 테이블의 first_name 열에서 A로 끝나면서 문자열 길이가 3인 데이터를 모두 조회하면?
+SELECT * FROM customer WHERE first_name LIKE '__A';
+
+-- customer 테이블의 first_name 열에서 A로 시작하고 A로 끝나면서 문자열 길이가 4인 데이터를 모두 조회하면?
+SELECT * FROM customer WHERE first_name LIKE 'A__A'; -- face..?
+
+-- customer 테이블에서 5글자인 이름(first_name)을 찾는 쿼리는??
+SELECT * FROM customer WHERE first_name LIKE '_____'; -- lollollol
