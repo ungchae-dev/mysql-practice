@@ -2,6 +2,7 @@
 -- 데이터베이스 선택
 USE sakila;
 
+-- 4-1. SELECT 문으로 데이터 조회하기
 -- sakila 데이터베이스의 customer 테이블 조회하기
 -- first_name 열을 조회
 SELECT first_name FROM customer;
@@ -16,6 +17,7 @@ SELECT * FROM customer;
 -- customer 테이블의 열 정보 조회
 SHOW COLUMNS FROM sakila.customer;
 
+-- 4-2. WHERE 절로 조건에 맞는 데이터 조회하기
 -- WHERE 절, = 연산자로 특정 값 조회
 SELECT * FROM customer
 WHERE first_name = 'MARIA';
@@ -147,7 +149,7 @@ SELECT * FROM address
 WHERE address2 = '';
 
 -- ...
--- ORDER BY 절로 데이터 정렬하기
+-- 4-3. ORDER BY 절로 데이터 정렬하기
 -- SELECT [column] FROM [table] 
 -- WHERE [column] = [condition] ORDER BY [column] [ASC or DESC]
 -- ORDER BY: 조회한 데이터를 정렬하기 위한 구문
@@ -220,3 +222,34 @@ ORDER BY customer_id ASC LIMIT 100, 10;
 -- 데이터 100개를 건너뛰고 101번째 데이터부터 10개를 조회하는 쿼리는?
 SELECT * FROM customer 
 ORDER BY customer_id ASC LIMIT 10 OFFSET 100;
+
+-- 4-4. 와일드카드로 문자열 조회하기
+-- LIKE?
+-- 자신이 뭘 조회해야할 지 모를 때 사용하는 키워드.
+-- LIKE는 와일드카드로 지정한 패턴과 일치하는 문자열, 날짜, 시간 등을 조회한다.
+
+-- LIKE의 기본 형식
+-- SELECT [column] FROM [table] WHERE [column] LIKE [condition]
+
+-- LIKE와 %로 특정 문자열을 포함하는 데이터 조회하기
+-- A%: A로 시작하는 모든 문자열
+-- %A: A로 끝나는 모든 문자열
+-- %A%: A가 포함된 모든 문자열
+
+-- customer 테이블의 first_name 열에서 A로 시작하는 모든 데이터를 조회하면?
+SELECT * FROM customer WHERE first_name LIKE 'A%';
+
+-- customer 테이블의 first_name 열에서 AA로 시작하는 모든 데이터를 조회하면?
+SELECT * FROM customer WHERE first_name LIKE 'AA%';
+
+-- customer 테이블의 first_name 열에서 A로 끝나는 모든 데이터를 조회하면?
+SELECT * FROM customer WHERE first_name LIKE '%A';
+
+-- customer 테이블의 first_name 열에서 RA로 끝나는 모든 데이터를 조회하면?
+SELECT * FROM customer WHERE first_name LIKE '%RA';
+
+-- customer 테이블의 first_name 열에서 A를 포함한 모든 데이터를 조회하면?
+SELECT * FROM customer WHERE first_name LIKE '%A%';
+
+-- customer 테이블의 first_name 열에서 A로 시작하는 문자열을 제외한 모든 데이터를 조회하면?
+SELECT * FROM customer WHERE first_name NOT LIKE 'A%';
