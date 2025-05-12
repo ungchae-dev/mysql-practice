@@ -324,3 +324,13 @@ SELECT * FROM customer WHERE first_name LIKE 'A__A'; -- face..?
 
 -- customer 테이블에서 5글자인 이름(first_name)을 찾는 쿼리는??
 SELECT * FROM customer WHERE first_name LIKE '_____'; -- lollollol
+
+-- underscore(_)와 %로 문자열 조회하기
+-- customer 테이블의 first_name 열에서 A와 R 사이에 한 글자를 포함하여 시작하며 이후는 상관없는 문자열을 모두 조회하면?
+SELECT * FROM customer WHERE first_name LIKE 'A_R%';
+
+-- customer 테이블의 first_name 열에서 R 앞에 두 글자를 포함해 시작하며 이후는 상관없는 문자열을 모두 조회하면?
+SELECT * FROM customer WHERE first_name LIKE '__R%';
+
+-- customer 테이블의 first_name 열에서 A로 시작하고 R과 함께 마지막 한 글자가 더있는 문자열을 모두 조회하면?
+SELECT * FROM customer WHERE first_name LIKE 'A%R_';
