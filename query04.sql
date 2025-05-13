@@ -373,3 +373,55 @@ SELECT * FROM customer WHERE first_name LIKE 'S%' AND first_name REGEXP 'A[L-N]'
 SELECT * FROM customer WHERE first_name LIKE '_______' 
 AND first_name REGEXP 'A[L-N]' 
 AND first_name REGEXP 'O$';
+
+-- 4-5. GROUP BY 절로 데이터 묶기
+-- GROUP BY 절: 데이터를 그룹화하고 싶을 때 사용
+-- HAVING 절: 데이터 그룹을 필터링할 때 사용
+-- 
+-- SELECT [column] FROM [table] 
+-- WHERE [column] = [condition] 
+-- GROUP BY [column] HAVING [column] = [condition]
+
+-- GROUP BY 절로 데이터 그룹화하기
+-- 데이터를 그룹화할 때는 반드시 '그룹화할 기준 열'을 지정해야 한다.
+--
+-- film 테이블에서 special_features 열의 데이터를 그룹화하여 조회하면?
+SELECT special_features FROM film GROUP BY special_features;
+
+-- film 테이블에서 rating 열의 데이터를 그룹화하여 조회하면?
+SELECT rating FROM film GROUP BY rating;
+
+-- 2개 이상의 열을 기준으로 그룹화하기
+-- 열을 2개 이상 지정해 그룹화할 때는 GROUP BY에 열을 순서대로 작성하면
+-- 그 순서대로 데이터를 그룹화한다.
+--
+-- film 테이블에서 special_features와 rating을 그룹화하고 조회하면?
+SELECT special_features, rating FROM film 
+GROUP BY special_features, rating;
+
+-- 반대로 film 테이블에서 rating과 special_features를 그룹화하고 조회하면?
+SELECT rating, special_features FROM film 
+GROUP BY rating, special_features;
+-- 열 순서만 바뀌었고, 쿼리 결과는 모두 같은 개수의 데이터(행)를 조회한다.
+
+-- COUNT로 그룹화한 열의 데이터 개수 세기
+-- COUNT는 집계 함수 중 하나이다.
+-- 
+-- film 테이블에서 special_features 열을 기준으로 데이터를 그룹화하고, 
+-- special_features 열과 각 데이터 그룹에 속한 데이터가 몇 개인지 cnt라는 별칭으로 조회하면?
+SELECT special_features, COUNT(*) AS cnt 
+FROM film 
+GROUP BY special_features;
+
+-- film 테이블에서 special_features, rating 열을 기준으로 데이터를 그룹화하고, 
+-- 각 그룹의 데이터와 데이터가 몇 개인지 cnt 라는 별칭으로 조회하면?
+-- (단, 해당 조회 데이터들 기준으로 내림차순 정렬할 것.)
+SELECT special_features, rating, COUNT(*) AS cnt 
+FROM film 
+GROUP BY special_features, rating 
+ORDER BY special_features, rating, cnt DESC;
+
+-- 데이터를 그룹화할 때는?
+-- '기준이 되는 열이 필요하므로 SELECT 문에 사용한 열을 반드시 GROUP BY 절에도 사용해야 한다.'
+-- SELECT 문과 GROUP BY 절의 열 이름을 다르게 하면?
+-- 당연히 오류가 발생한다.
