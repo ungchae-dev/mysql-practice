@@ -425,3 +425,39 @@ ORDER BY special_features, rating, cnt DESC;
 -- '기준이 되는 열이 필요하므로 SELECT 문에 사용한 열을 반드시 GROUP BY 절에도 사용해야 한다.'
 -- SELECT 문과 GROUP BY 절의 열 이름을 다르게 하면?
 -- 당연히 오류가 발생한다.
+
+-- HAVING 절로 그룹화한 데이터 필터링하기
+-- 그룹화한 데이터에서 데이터를 필터링하려면?
+-- HAVING 절을 사용한다.
+-- WHERE 절 (cf) HAVING 절
+-- WHERE 절: 테이블에 있는 열에 대해 적용
+-- HAVING 절: SELECT문으로 조회한 열 / GROUP BY 절에 그룹화한 열에만 필터링 적용
+-- 
+-- film 테이블에서 special_features, rating 열을 기준으로 그룹화한 뒤, 
+-- rating 열에서 G인 데이터만 필터링해 조회하면?
+SELECT special_features, rating 
+FROM film 
+GROUP BY special_features, rating 
+HAVING rating = 'G';
+
+-- film 테이블에서 special_features 열을 기준으로 그룹화한 뒤, 
+-- 해당 열과 각 그룹에서 데이터의 개수가 70보다 큰 것을 cnt란 별칭으로 조회하면?
+SELECT special_features, COUNT(*) AS cnt 
+FROM film 
+GROUP BY special_features 
+HAVING cnt > 70; 
+
+-- 그룹화하지 않은 열에 HAVING 절을 사용하면?
+-- SELECT special_features, COUNT(*) AS cnt 
+-- FROM film 
+-- GROUP BY special_features 
+-- HAVING rating = 'G'; 
+-- 당연히 에러 발생
+
+-- 위 에러 쿼리에서 film 테이블에서 special_features, rating 열을 기준으로 그룹화한 뒤,  
+-- rating이 R인 값과 데이터의 개수가 8보다 큰 값을 조회하여 쿼리문 수정해보기 
+-- (단, 개수는 별칭 'cnt'로 사용할 것.)
+SELECT special_features, rating, COUNT(*) AS cnt 
+FROM film
+GROUP BY special_features, rating 
+HAVING rating = 'R' AND cnt > 8;
