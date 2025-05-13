@@ -427,6 +427,7 @@ ORDER BY special_features, rating, cnt DESC;
 -- 당연히 오류가 발생한다.
 
 -- HAVING 절로 그룹화한 데이터 필터링하기
+--
 -- 그룹화한 데이터에서 데이터를 필터링하려면?
 -- HAVING 절을 사용한다.
 -- WHERE 절 (cf) HAVING 절
@@ -461,3 +462,33 @@ SELECT special_features, rating, COUNT(*) AS cnt
 FROM film
 GROUP BY special_features, rating 
 HAVING rating = 'R' AND cnt > 8;
+
+-- DISTINCT로 중복된 데이터 제거하기
+-- 
+-- GROUP BY 절을 사용하지 않고 같은 열에 있는 중복 데이터를 제거하고 싶다면?
+-- DISTINCT를 사용한다.
+-- 기본 형식:
+-- SELECT DISTINCT [column] FROM [table]
+
+-- DISTINCT로 film 테이블의 special_features, rating 열에서 
+-- 중복된 데이터를 제거하여 조회하면?
+SELECT DISTINCT special_features, rating 
+FROM film;
+
+-- 쿼리 실행 결과는 GROUP BY 절로 얻은 결과와 같다.
+SELECT special_features, rating FROM film 
+GROUP BY special_features, rating;
+
+-- DISTINCT와 COUNT 함수를 같이 사용하여 열을 조회해보기
+-- 
+-- SELECT DISTINCT special_features, rating, COUNT(*) AS cnt 
+-- FROM film;
+-- 
+-- 에러가 발생한다. 이유는?
+-- GROUP BY 절을 사용하지 않아서.
+-- COUNT 함수는 그룹별로 집계를 하는 '집계함수' 중 하나이므로 반드시 GROUP BY와 함께 사용한다.
+SELECT special_features, rating, COUNT(*) AS cnt 
+FROM film 
+GROUP BY special_features, rating
+ORDER BY rating, cnt DESC;
+-- 예를 들면 이런 식으로.
