@@ -571,3 +571,45 @@ INSERT INTO doit_increment (col_2, col_3) VALUES ('5씩 증가할까? (2)', 0);
 
 SELECT * FROM doit_increment;
 -- AUTO_INCREMENT의 col_1 데이터는 100 다음 101로 1 증가한 다음부터 5씩 자동 증가하게 된다.
+
+-- 조회 결과를 다른 테이블에 입력하려면?
+-- INSERT INTO ~ SELECT를 사용한다.
+-- ※이 때 꼭 입력하려는 테이블과 조회한 열의 데이터 유형이 같을 것.
+
+-- 1) 먼저 2개 테이블 doit_insert_select_from과 doit_insert_select_to를 생성한다.
+-- 이 때 2개 열 col_1, col_2에 해당하는 데이터 유형을 
+-- INT, VARCHAR(10)으로 두 테이블 모두 일치시킨다.
+CREATE TABLE doit_insert_select_from (
+col_1 INT, 
+col_2 VARCHAR(10)
+);
+
+CREATE TABLE doit_insert_select_to (
+col_1 INT, 
+col_2 VARCHAR(10)
+);
+
+-- 2) 초기 데이터를 doit_insert_select_from에 삽입하기
+INSERT INTO doit_insert_select_from VALUES (1, 'Do');
+INSERT INTO doit_insert_select_from VALUES (2, 'It');
+INSERT INTO doit_insert_select_from VALUES (3, 'MySQL');
+
+-- 3) doit_insert_select_from 테이블의 모든 데이터를 조회해 
+-- doit_insert_select_to 테이블로 삽입하기 (거꾸로 생각해서 쿼리 작성해보기)
+SELECT * FROM doit_insert_select_from;
+SELECT * FROM doit_insert_select_to;
+
+INSERT INTO doit_insert_select_to 
+SELECT * FROM doit_insert_select_from;
+
+-- 4) doit_insert_select_to 테이블의 전체 데이터 조회하기
+SELECT * FROM doit_insert_select_to;
+
+-- 열 이름 입력 대신 SELECT 문을 통해 새로운 테이블 생성하기
+-- AS와 ()를 통해 쿼리문을 작성한다.
+CREATE TABLE doit_select_new 
+AS (SELECT * FROM doit_insert_select_from);
+
+SELECT * FROM doit_select_new;
+-- 테이블 생성 시 기존 테이블 doit_insert_select_from에 있던
+-- 컬럼들과 각 컬럼에 해당하는 데이터 그대로 삽입되어 생성됨.
