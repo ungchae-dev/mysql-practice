@@ -613,3 +613,98 @@ AS (SELECT * FROM doit_insert_select_from);
 SELECT * FROM doit_select_new;
 -- 테이블 생성 시 기존 테이블 doit_insert_select_from에 있던
 -- 컬럼들과 각 컬럼에 해당하는 데이터 그대로 삽입되어 생성됨.
+
+-- 외래키로 연결되어 있는 테이블에 데이터 입력 및 삭제하기
+-- 부모 테이블과 자식 테이블 생성
+CREATE TABLE doit_parent (col_1 INT PRIMARY KEY);
+CREATE TABLE doit_child (col_1 INT);
+
+-- 참조 관계를 생성하는 명령어 REFERENCES를 통해
+-- doit_child 테이블이 doit_parent 테이블을 참조한다.
+ALTER TABLE doit_child 
+ADD FOREIGN KEY (col_1) REFERENCES doit_parent (col_1);
+
+-- 자식 테이블(하위 테이블)에 데이터 삽입 시, 
+-- 부모 테이블(상위 테이블)에 해당 데이터가 없으면?
+-- INSERT INTO doit_child VALUES (1);
+-- 자식 테이블 doit_child가 부모 테이블 doit_parent의 col_1에 대해
+-- 외래키(FOREIGN KEY)가 설정되어 있어 참조 에러 발생.
+-- 해결하려면?
+-- 부모 테이블에 데이터를 먼저 입력하면 된다.
+INSERT INTO doit_parent VALUES (1);
+INSERT INTO doit_child VALUES (1);
+-- 순서에 따라, 부모 테이블에 먼저 데이터 삽입...(1)
+-- 자식 테이블에 데이터 삽입...(2)
+
+SELECT * FROM doit_parent;
+SELECT * FROM doit_child;
+
+-- 부모 테이블에서만 데이터를 삭제하면?
+DELETE FROM doit_parent WHERE col_1 = 1;
+-- a foreign key constraint fails ...
+-- 외래키 제약조건이 실패했다는 에러 코드
+-- 자식 테이블이 부모 테이블의 컬럼에 대해 외래키가 설정되어 있어 참조 에러가 발생한 것.
+-- 자식 테이블의 데이터를 먼저 삭제한 후...(1)
+-- 부모 테이블의 데이터를 삭제해야...(2) 
+-- 데이터가 정상적으로 삭제된다.
+
+-- 자식 테이블의 데이터 삭제 후 부모 테이블의 데이터 삭제
+DELETE FROM doit_child WHERE col_1 = 1;
+DELETE FROM doit_parent WHERE col_1 = 1;
+
+-- 외래키로 연결되어 있는 테이블을 삭제하는 경우는?
+-- 방식 1)
+-- 자식 테이블(하위 테이블) 먼저 삭제한 후...(1)
+-- 부모 테이블(상위 테이블)을 삭제하면 된다...(2)
+
+-- 만약, 자식 테이블의 데이터는 유지하면서 부모 테이블을 삭제하고 싶다면?
+-- 방식 2)
+-- 2가지 방식 모두 실습해보기.
+
+-- 방식 1)
+-- 자식 테이블 삭제 후 부모 테이블 삭제
+DROP TABLE doit_child;
+DROP TABLE doit_parent;
+
+-- 방식 2) 자식 테이블의 데이터는 유지하면서 부모 테이블을 삭제하는 경우
+CREATE TABLE doit_parent (col_1 INT PRIMARY KEY);
+CREATE TABLE doit_child (col_1 INT);
+
+ALTER TABLE doit_child ADD FOREIGN KEY (col_1) REFERENCES doit_parent (col_1);
+
+-- 제약조건 확인하는 쿼리문?
+-- SHOW CREATE TABLE [테이블 명]
+SHOW CREATE TABLE doit_child;
+-- 출력 결과: 
+-- CONSTRAINT `doit_child_ibfk_1` FOREIGN KEY (`col_1`) REFERENCES `doit_parent` (`col_1`)
+-- 외래키 제약 조건이 있음.
+
+-- 제약 조건 제거 후 부모 테이블 삭제하기
+-- doit_child_ibfk_1: doit_child의 외래키
+ALTER TABLE doit_child 
+DROP CONSTRAINT doit_child_ibfk_1;
+
+SHOW CREATE TABLE doit_child;
+-- 자식 테이블을 조회해 제약 조건이 제거되었음 확인.
+
+-- 외래키(Foreign Key) 제약조건을 일시적으로 꺼서 무결성을 무시하고 데이터를 넣거나 바꾼 다음,
+-- 다시 외래키 기능을 켜도 이미 들어간 데이터는 검사하지 않는다.
+-- 원래 외래키(FOREIGN KEY) 란?
+-- 자식 테이블의 어떤 값이 반드시 부모 테이블에 존재해야 한다.
+-- 이게 데이터의 무결성을 보장하는 것이기 때문이다.
+-- 
+-- 외래키 비활성 쿼리: SET FOREIGN_KEY_CHECKS=0 
+-- 외래키 활성 쿼리: SET FOREIGN_KEY_CHECKS=1
+-- 
+-- 만약에, 내가 외래키를 잠시 끄면?
+-- ex) SET FOREIGN_KEY_CHECKS = 0; -- 무결성 체크 OFF
+-- INSERT INTO doit_child (col_1) VALUES (999);  -- 부모 테이블에 없는 값을 자식 테이블에 강제로 넣은 경우
+-- SET FOREIGN_KEY_CHECKS = 1; -- 무결성 체크 ON
+
+-- 그럼 무슨 일이 벌어질까?
+-- 999라는 잘못된 값이 자식 테이블에 그대로 남아 있음
+-- 외래키 기능을 다시 켜도 이미 들어간 잘못된 값은 검사하지 않음.
+
+-- 언제 쓸까?
+-- 대량 데이터 마이그레이션(이관) 시 또는 임시로 외래키 위반 데이터를 넣어야할 때 사용하지만,
+-- 무결성을 스스로 책임져야 하니까 신중하게 써야 한다.
