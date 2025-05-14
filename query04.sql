@@ -1,5 +1,5 @@
 -- query03.sql에서 생성한 doitsql DB 사용
--- 데이터베이스 선택
+-- sakila 데이터베이스 선택
 USE sakila;
 
 -- 4-1. SELECT 문으로 데이터 조회하기
@@ -492,3 +492,82 @@ FROM film
 GROUP BY special_features, rating
 ORDER BY rating, cnt DESC;
 -- 예를 들면 이런 식으로.
+
+-- 4-6. 테이블 생성 및 조작하기
+CREATE DATABASE IF NOT EXISTS doitsql;
+-- database exists.
+
+-- AUTO_INCREMENT로 데이터 입력하기
+-- doitsql 데이터베이스 선택
+USE doitsql;
+
+-- 첫번째 열에 AUTO_INCREMENT를 적용하여 테이블 생성
+DROP TABLE doit_increment; -- 기존 테이블 삭제
+
+CREATE TABLE doit_increment (
+col_1 INT AUTO_INCREMENT PRIMARY KEY, 
+col_2 VARCHAR(50), 
+col_3 INT
+);
+
+SELECT * FROM doit_increment;
+
+INSERT INTO doit_increment (col_2, col_3) VALUES ('1 자동 입력', 1);
+INSERT INTO doit_increment (col_2, col_3) VALUES ('2 자동 입력', 2);
+
+SELECT * FROM doit_increment; 
+-- 테이블 생성 시 AUTO_INCREMENT로 지정했기 때문에 col_1 열의 값이 자동 증가함.
+
+-- AUTO_INCREMENT가 정의된 열에 값을 입력하면?
+INSERT INTO doit_increment (col_1, col_2, col_3) 
+VALUES (3, '3 자동 입력', 3);
+
+SELECT * FROM doit_increment;
+-- 정상적으로 값이 삽입된 결과 확인~
+
+-- 그럼, 자동 입력되는 값보다 큰 값을 입력한 경우는?
+INSERT INTO doit_increment (col_1, col_2, col_3) 
+VALUES (5, '4 건너뛰고 5 자동 입력', 5);
+
+SELECT * FROM doit_increment;
+
+-- 그럼 처음 상황으로 돌아가 1열을 다시 제외하고 데이터를 입력한 경우는?
+INSERT INTO doit_increment (col_2, col_3) VALUES ('어디까지 입력되었을까?', 6);
+SELECT * FROM doit_increment;
+-- 5 다음 값인 6이 자동으로 잘 입력된다.
+
+-- AUTO_INCREMENT로 자동 생성된 마지막 값 확인하기
+-- 데이터를 입력하다 보면 숫자가 연속적으로 입력되는 것이 아니므로 
+-- AUTO_INCREMENT가 적용됐을 때 데이터가 어디까지 입력됐는 지 확인하고 싶다면?
+SELECT LAST_INSERT_ID();
+-- LAST_INSERT_ID()?
+-- 현재 마지막 AUTO_INCREMENT 값을 보여준다.
+
+-- AUTO_INCREMENT 시작값 변경하기
+-- AUTO_INCREMENT를 다시 적용했을 때 다른 값으로 시작하도록 설정해보면?
+-- ※단, 이미 해당 열에 입력된 값이 있으므로 그 값보다 큰 값으로 설정할 것.
+
+-- 다음 INSERT 시 시작할 숫자를 바꾸는 쿼리?
+-- ALTER TABLE [table_name] AUTO_INCREMENT=[number];
+-- 자동으로 입력되는 값을 100부터 시작하기
+ALTER TABLE doit_increment AUTO_INCREMENT=100;
+INSERT INTO doit_increment (col_2, col_3) VALUES ('시작값이 변경되었을까?', 0);
+
+SELECT * FROM doit_increment;
+
+-- AUTO_INCREMENT 증가값 변경하기
+-- 자동으로 입력되는 값이 1이 아닌 5씩 증가하도록 수정할 수 있을까?
+-- 
+-- MySQL에서는 SET을 사용해서 시스템 변수나 사용자 변수의 값을 설정할 수 있다.
+-- 형식: SET [시스템 변수] = [값];
+-- 
+-- @@? 
+-- MySQL의 시스템 변수(system variable)를 참조할 때 사용하는 특별한 문법
+-- AUTO_INCREMENT가 자동 증가할 때 한 번에 5씩 증가하도록 설정하는 쿼리문은?
+SET @@AUTO_INCREMENT_INCREMENT = 5;
+
+INSERT INTO doit_increment (col_2, col_3) VALUES ('5씩 증가할까? (1)', 0);
+INSERT INTO doit_increment (col_2, col_3) VALUES ('5씩 증가할까? (2)', 0);
+
+SELECT * FROM doit_increment;
+-- AUTO_INCREMENT의 col_1 데이터는 100 다음 101로 1 증가한 다음부터 5씩 자동 증가하게 된다.
