@@ -754,6 +754,100 @@ SELECT * FROM doit_float WHERE col_1 = 0.7;
 
 -- 암시적 형 변환으로 계산 결과가 출력된 예
 SELECT 10/3;
-
 -- 암시적 형 변환 시, 우선순위가 정의된 프로세스에 따라
 -- 우선순위가 낮은 데이터 유형은 우선순위가 높은 데이터 유형으로 변환된다.
+-- ...
+
+-- 문자형 데이터유형 알아보기
+-- 문자형은 크게 고정 길이, 가변 길이로 구분할 수 있다.
+-- 1) 고정 길이: 실제 값을 입력하지 않아도 지정한 만큼 저장 공간을 사용
+-- 2) 가변 길이: 실제 입력한 값의 크기만큼만 저장 공간을 사용
+
+-- CHAR(n) or VARCHAR(n)
+-- ※ n: 바이트가 아닌 문자열의 문자 수
+-- ex) CHAR(5), VARCHAR(5): 5byte(X) 문자 5개를 저장할 수 있다(O)
+CREATE TABLE doit_char_varchar (
+	col_1 CHAR(5), 
+    col_2 VARCHAR(5)
+);
+
+INSERT INTO doit_char_varchar (col_1, col_2) VALUES ('12345', '12345');
+INSERT INTO doit_char_varchar (col_1, col_2) VALUES ('ABCDE', 'ABCDE');
+INSERT INTO doit_char_varchar (col_1, col_2) VALUES ('가나다라마', '가나다라마');
+INSERT INTO doit_char_varchar (col_1, col_2) VALUES ('hello', '안녕하세요');
+INSERT INTO doit_char_varchar (col_1, col_2) VALUES ('安寧安寧安', '安寧安寧安');
+
+SELECT col_1, CHAR_LENGTH(col_1) AS char_length, LENGTH(col_1) AS char_byte, 
+col_2, CHAR_LENGTH(col_2) AS char_length, LENGTH(col_2) AS char_byte 
+FROM doit_char_varchar;
+
+-- 숫자, 영어: 한 글자당 1 byte
+-- 한글, 한문: 한 글자당 3 byte 사용
+-- MySQL에서는 유니코드 UTF-8은 3 byte, 
+-- UTF-16은 2 byte, 
+-- (다양한 이모티콘 등을 표현하는) utf8mb4 형식을 기본으로 사용하기도 함.
+
+-- ※ 저장 공간에 주의할 것!
+-- MySQL에선 하나의 행(레코드)에서 TEXT와 BLOB 형식을 제외한 열 전체 크기가 64KB를 초과할 수 없다.
+-- 저장 공간을 초과한 예)
+CREATE TABLE doit_table_byte (
+col_1 VARCHAR(16383)
+);
+DROP TABLE doit_table_byte;
+
+CREATE TABLE doit_table_byte2 (
+col_1 VARCHAR(16383), 
+col_2 VARCHAR(10)
+);
+-- 생성 실패
+-- 한 행의 최대 저장 공간을 초과하여 발생한 것으로, BLOB나 TEXT 형식으로 변경해서 사용해야 하며, 
+-- 이 때 각각의 타입은 저장소에 대한 오버헤드가 발생할 수 있음.
+
+-- 문자 집합
+-- MySQL에서는 데이터베이스, 테이블, 열까지 모두 서로 다른 문자 집합(character set, 캐릭터 셋)을
+-- 사용할 수 있다. ※ 단, 문자열을 저장하는 CHAR, VARCHAR, TEXT가 적용된 열만 사용 가능
+-- 보통, 한글은 EUC-KR 또는 utf8mb4 문자 집합을 사용하고,
+-- 일본어는 CP932 또는 utf8mb4 등을 사용한다.
+
+-- MySQL 서버에서 사용할 수 있는 문자 집합 확인
+-- ref) 보통 utf8mb4를 사용하면 전 세계의 문자/이모티콘을 문제 없이 저장할 수 있음.
+SHOW CHARACTER SET;
+
+-- collation, 콜레이션
+-- 콜레이션은 문자열 데이터가 담긴 열의 비교나 정렬 순서를 위한 규칙이다.
+-- 콜레이션에 따라, 우선순위를 한글로 할지, 영어로 할지, 대소문자로 구분할지 등이 결점됨.
+-- ex) 데이터 정렬 시 사용하는 ORDER BY 절에서 오름차순, 내림차순인 ASC, DESC의 기준은?
+-- 정렬 우선순위인 콜레이션이 이미 적용된 것. 
+-- => ※ 한 데이터베이스 내부 / 테이블 내부 / 열 내부에서 콜레이션이 다를 경우, 
+-- 정렬 작업을 한 결과가 달라질 수 있으므로 매우 주의할 것!
+
+-- 콜레이션에 따른 정렬 순서 비교를 위한 테이블 생성
+CREATE TABLE doit_collation (
+col_latin1_general_ci VARCHAR(10) COLLATE latin1_general_ci, 
+col_latin1_general_cs VARCHAR(10) COLLATE latin1_general_cs, 
+col_latin1_bin VARCHAR(10) COLLATE latin1_bin, 
+col_latin7_general_ci VARCHAR(10) COLLATE latin7_general_ci
+);
+
+INSERT INTO doit_collation VALUES ('a', 'a', 'a', 'a');
+INSERT INTO doit_collation VALUES ('b', 'b', 'b', 'b');
+INSERT INTO doit_collation VALUES ('A', 'A', 'A', 'A');
+INSERT INTO doit_collation VALUES ('B', 'B', 'B', 'B');
+INSERT INTO doit_collation VALUES ('*', '*', '*', '*');
+INSERT INTO doit_collation VALUES ('_', '_', '_', '_');
+INSERT INTO doit_collation VALUES ('!', '!', '!', '!');
+INSERT INTO doit_collation VALUES ('1', '1', '1', '1');
+INSERT INTO doit_collation VALUES ('2', '2', '2', '2');
+
+-- 한 줄씩 실행하며 콜레이션에 따른 정렬 순서 확인
+SELECT col_latin1_general_ci FROM doit_collation 
+ORDER BY col_latin1_general_ci; 
+
+SELECT col_latin1_general_cs FROM doit_collation 
+ORDER BY col_latin1_general_cs;
+
+SELECT col_latin1_bin FROM doit_collation 
+ORDER BY col_latin1_bin;
+
+SELECT col_latin7_general_ci FROM doit_collation 
+ORDER BY col_latin7_general_ci;
