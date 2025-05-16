@@ -851,3 +851,24 @@ ORDER BY col_latin1_bin;
 
 SELECT col_latin7_general_ci FROM doit_collation 
 ORDER BY col_latin7_general_ci;
+
+-- 날짜형 및 시간형 데이터유형 알아보기
+-- 데이터 유형 4가지: TIME, DATE, DATETIME, TIMESTAMP
+-- TIME: hh:mm:ss (시:분:초) 형태의 데이터에 사용
+-- DATE: yyyy-mm-dd (년-월-일) 형태
+-- DATETIME: yyyy-mm-dd hh:mm:ss[.fraction] 형태 (년-월-일 시:분:초)
+-- TIMESTAMP: 날짜와 시간 부분을 모두 포함하는 데이터에 사용
+-- ※ DATETIME과 TIMESTAMP의 큰 차이?
+-- DATETIME: 최대 8byte까지 사용 가능, 직접 날짜와 시간을 입력한 데이터의 형식.
+-- TIMESTAMP: 최대 7byte까지 사용 가능, 데이터 저장 시 자동으로 입력된 현재의 UTC 날짜 데이터의 형식.
+
+-- 데이터 유형에 따른 현재 시간 조회
+CREATE TABLE date_table (
+justdate DATE, 
+justtime TIME, 
+justdatetime DATETIME, 
+justtimestamp TIMESTAMP
+);
+
+INSERT INTO date_table VALUES (now(), now(), now(), now());
+SELECT * FROM date_table;
