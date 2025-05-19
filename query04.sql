@@ -872,3 +872,34 @@ justtimestamp TIMESTAMP
 
 INSERT INTO date_table VALUES (now(), now(), now(), now());
 SELECT * FROM date_table;
+
+-- Chapter4 Quiz
+USE world; -- 데이터베이스 world 사용
+
+-- Q1. world 데이터베이스의 country 테이블에서 Code가 KOR인 데이터를 조회하면?
+SELECT * FROM country WHERE Code = 'KOR';
+
+-- Q2. world 데이터베이스의 country 테이블에서 Region 열에 Asia라는 글자를 포함하는 데이터를 조회하면?
+SELECT * FROM country WHERE Region LIKE '%Asia%';
+
+-- ٩(๑❛ᴗ❛๑)۶ Q3. world 데이터베이스의 country 테이블에서 Name 열의 데이터가 5글자인 데이터를 조회하면?
+SELECT * FROM country WHERE Name LIKE '_____';
+
+-- ٩(๑❛ᴗ❛๑)۶ Q4. world 데이터베이스의 country 테이블에서 Population 열을 숫자가 높은 순으로 정렬하여 조회하면?
+SELECT * FROM country ORDER BY Population DESC;
+
+-- Q5. world 데이터베이스의 country 테이블에서 LifeExpectancy 열의 데이터가 60 이상 70 이하인 데이터를 조회하면?
+SELECT * FROM country WHERE LifeExpectancy BETWEEN 60 AND 70; -- solve (1)
+SELECT * FROM country WHERE LifeExpectancy >= 60 AND LifeExpectancy <= 70; -- solve (2)
+
+-- ٩(๑❛ᴗ❛๑)۶ Q6. world 데이터베이스의 country 테이블에서 Region 열의 데이터가 Asia를 포함하지 않으면서 name 열에서 
+-- 글자 g 또는 u를 포함하는 데이터를 Population 열의 내림차순으로 조회하면?
+SELECT * FROM country
+WHERE Region NOT LIKE '%Asia%' AND name REGEXP '[g, u]' 
+ORDER BY Population DESC;
+
+-- ٩(๑❛ᴗ❛๑)۶ Q7. world 데이터베이스의 country 테이블에서 Region 그룹별로 개수를 구하고, 개수가 높은 순서대로 조회하면?
+SELECT Region, count(*) AS cnt FROM country 
+GROUP BY Region 
+ORDER BY cnt DESC;
+-- Chapter4 END
