@@ -51,3 +51,34 @@ FROM customer AS cu
 INNER JOIN address AS ad ON cu.address_id = ad.address_id -- address_id: 주소 번호
 INNER JOIN city AS ci ON ad.city_id = ci.city_id -- city_id: 도시 번호
 WHERE cu.first_name = 'ROSA';
+
+-- 외부 조인
+-- 두 테이블을 조인해 둘 중 한 테이블에만 있는 데이터를 조회해야 하는 경우엔?
+-- 외부 조인(OUTER JOIN)을 사용함
+-- ex) 상품을 주문한 고객과 상품을 주문하지 않은 고객 데이터를 모두 조회하는 경우라면
+-- 외부 조인 사용 가능. 외부 조인은 열(column)의 일치 여부를 고려하지 않고
+-- 한 쪽 테이블과 다른 쪽 테이블에 조인할 때 사용
+--
+-- 외부 조인(OUTER JOIN)의 기본 형식
+-- SELECT
+-- [column]
+-- FROM [table1]
+-- [LEFT | RIGHT | FULL] OUTER JOIN [table2] ON [table1.column] = [table2.column]
+-- WHERE [condition(검색 조건)]
+-- 
+-- OUTER JOIN은 LEFT, RIGHT, FULL 중 한 옵션을 지정해 사용
+-- ex) A, B 테이블이 좌우에 나란히 있는 경우라면, 
+-- A 테이블을 기준으로 B 테이블을 조인하고 싶다면? LEFT를 사용
+-- B 테이블을 기준으로 A 테이블을 조인하고 싶다면? RIGHT를 사용
+
+-- LEFT OUTER JOIN한 결과 조회
+SELECT
+a.address, a.address_id AS a_address_id, 
+b.address_id AS b_address_id, b.store_id
+FROM address AS a
+LEFT OUTER JOIN store AS b 
+ON a.address_id = b.address_id;
+-- sakila DB의 두 테이블 address와 store의 
+-- 열(column) address_id를 사용해 address 테이블을 기준으로 외부 조인한 쿼리문.
+-- store 테이블에 없는 address_id의 경우 NULL로 출력된 걸 알 수 있다.
+-- => A와 B의 벤 다이어그램에서 A에 해당
