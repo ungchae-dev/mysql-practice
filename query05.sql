@@ -173,3 +173,37 @@ FROM store AS a
 RIGHT OUTER JOIN address AS b 
 ON a.address_id = b.address_id
 WHERE a.address_id IS NULL;
+
+-- 교차 조인(CROSS JOIN, = 카르테시안(cartesian) 곱)
+-- 각 테이블의 모든 경우의 수를 조합한 데이터가 필요할 경우 사용
+-- 
+-- CROSS JOIN의 기본 형식
+-- SELECT [column]
+-- FROM [table 1]
+-- CROSS JOIN [table 2]
+-- WHERE [search condition(검색 조건)]
+
+-- 교차 조인의 경우, 조건(WHERE) 설정을 안하면
+-- 데이터의 양이 기하급수적으로 늘어나므로 주의할 것.
+-- 보통, sample data를 만들거나 각 행에 같은 숫자의 데이터를 만들어야 할 때 활용함
+
+-- 샘플 데이터 생성
+CREATE TABLE doit_cross1(num INT);
+CREATE TABLE doit_cross2(name VARCHAR(10));
+-- 삽입
+INSERT INTO doit_cross1 VALUES (1), (2), (3);
+INSERT INTO doit_cross2 VALUES ('Do'), ('It'), ('SQL');
+
+-- 교차 조인(CROSS JOIN)을 적용한 쿼리
+SELECT
+a.num, b.name
+FROM doit_cross1 AS a 
+CROSS JOIN doit_cross2 AS b
+ORDER BY a.num;
+
+-- num이 1인 데이터를 교차 조인을 통해 조회하는 쿼리
+SELECT
+a.num, b.name
+FROM doit_cross1 AS a 
+CROSS JOIN doit_cross2 AS b 
+WHERE a.num = 1;
