@@ -95,7 +95,7 @@ WHERE b.address_id IS NULL;
 -- => A와 B의 벤 다이어그램에서 A-B에 해당함
 
 -- RIGHT OUTER JOIN으로 외부 조인하기
--- A와 B의 벤 다이어그램에서 B에 해당한다.
+-- => A와 B의 벤 다이어그램에서 B에 해당한다.
 
 -- RIGHT OUTER JOIN한 결과 조회
 SELECT
@@ -104,3 +104,15 @@ b.address_id AS b_address_id, b.store_id
 FROM address AS a
 RIGHT OUTER JOIN store AS b 
 ON a.address_id = b.address_id;
+
+-- RIGHT OUTER JOIN 결과에서 NULL이 있는 데이터 조회
+-- => A와 B의 벤 다이어그램에서 B-A에 해당한다.
+-- ex) 왼쪽: store 테이블, 오른쪽 address 테이블이 있고, 
+-- 오른쪽 address 테이블 기준으로 store 테이블과 RIGHT OUTER JOIN한 뒤, 
+-- address 테이블에 있는 데이터만 조회하는 쿼리?
+SELECT 
+a.address_id AS a_address_id, a.store_id, 
+b.address, b.address_id AS b_address_id 
+FROM store AS a
+RIGHT OUTER JOIN address AS b ON a.address_id = b.address_id 
+WHERE a.address_id IS NULL;
