@@ -93,3 +93,14 @@ WHERE b.address_id IS NULL;
 -- OUTER JOIN한 결과에서 NULL을 조회하면 
 -- 기준 테이블(여기서 왼쪽 테이블)에만 존재하는 데이터를 조회할 경우에 사용한다.
 -- => A와 B의 벤 다이어그램에서 A-B에 해당함
+
+-- RIGHT OUTER JOIN으로 외부 조인하기
+-- A와 B의 벤 다이어그램에서 B에 해당한다.
+
+-- RIGHT OUTER JOIN한 결과 조회
+SELECT
+a.address, a.address_id AS a_address_id, 
+b.address_id AS b_address_id, b.store_id 
+FROM address AS a
+RIGHT OUTER JOIN store AS b 
+ON a.address_id = b.address_id;
