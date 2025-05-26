@@ -207,3 +207,31 @@ a.num, b.name
 FROM doit_cross1 AS a 
 CROSS JOIN doit_cross2 AS b 
 WHERE a.num = 1;
+
+-- 셀프 조인(SELF JOIN)
+-- 같은 테이블을 사용하는 특수한 조인.
+-- 내부 조인(INNER JOIN), 외부 조인(OUTER JOIN), 교차 조인(CROSS JOIN)은 모두
+-- 2개 이상의 테이블을 조인한 반면,
+-- 셀프 조인은 자기 자신과 조인할 때 사용함.
+--
+-- 셀프 조인을 사용할 때 알아둘 점
+-- 1) 자기 자신을 조인에 사용함
+-- 2) ※ 반드시 테이블의 별칭을 사용해야 함 
+-- 소스는 한 테이블이지만, 2개의 테이블처럼 사용하므로 각 테이블에 서로 다른 별칭을 사용해야하기 때문에.
+
+-- SELF JOIN을 적용한 쿼리_1
+SELECT a.customer_id AS a_customer_id, b.customer_id AS b_customer_id
+FROM customer AS a
+INNER JOIN customer AS b 
+ON a.customer_id = b.customer_id;
+-- 이 쿼리는 INNER JOIN을 통해 같은 테이블이지만 마치 2개의 테이블인 것처럼 조인해서 사용한 것. => 단, 별칭 사용 필수!
+
+-- SELF JOIN을 적용한 쿼리_2
+-- payment 테이블에서 전일 대비 수익이 얼마인지 조회하는 쿼리
+SELECT
+a.payment_id, a.amount AS yesterday_amount, b.payment_id, b.amount AS today_amount, 
+b.amount - a.amount AS profit_amount
+FROM payment AS a
+LEFT OUTER JOIN payment AS b
+ON a.payment_id = b.payment_id -1;
+-- 오늘의 가격 b.amount와 어제의 가격 a.amount를 통해 매출을 비교해 수익의 증감을 알 수 있다.
