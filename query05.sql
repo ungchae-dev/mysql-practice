@@ -116,3 +116,35 @@ b.address, b.address_id AS b_address_id
 FROM store AS a
 RIGHT OUTER JOIN address AS b ON a.address_id = b.address_id 
 WHERE a.address_id IS NULL;
+
+-- FULL OUTER JOIN으로 외부 조인하기
+-- FULL OUTER JOIN? 
+-- LEFT OUTER JOIN + RIGHT OUTER JOIN이라 생각해보기~
+-- 단점: FULL OUTER JOIN은 양쪽 테이블에서 일치하지 않는 행도 모두 조회한다.
+-- 즉, 조인 조건에 일치하지 않는 항목, 일치하는 항목 모두 표시되므로 실제 사용하는 경우는 드물다.
+-- 사용하는 경우: 가끔 데이터베이스 디자인 or 데이터에 
+-- 몇 가지 문제가 있어 데이터의 누락이나 오류를 찾아낼 때 사용함.
+-- => A와 B의 벤 다이어그램에서 A+B에 해당한다.
+
+-- MySQL에서는 FULL OUTER JOIN을 지원하지 않는다.
+-- 따라서, FULL OUTER JOIN 효과를 내려면
+-- LEFT OUTER JOIN의 결과와 RIGHT OUTER JOIN의 결과를 합치는 식으로 명령어 UNION을 사용한다.
+
+-- FULL OUTER JOIN한 결과 조회 (왼쪽:store(tb), 오른쪽:address(tb))
+SELECT 
+a.address_id AS a_address_id, a.store_id, 
+b.address, b.address_id AS b_address_id
+FROM store AS a
+LEFT OUTER JOIN address AS b 
+ON a.address_id = b.address_id
+
+UNION
+
+SELECT
+a.address_id AS a_address_id, a.store_id,
+b.address, b.address_id AS b_address_id
+FROM store AS a
+RIGHT OUTER JOIN address AS b
+ON a.address_id = b.address_id;
+-- 결과를 조회하면 LEFT OUTER JOIN과 RIGHT OUTER JOIN의 결과가 합쳐진(UNION) 
+-- FULL OUTER JOIN의 결과를 가져온다.
