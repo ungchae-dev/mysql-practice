@@ -148,3 +148,28 @@ RIGHT OUTER JOIN address AS b
 ON a.address_id = b.address_id;
 -- 결과를 조회하면 LEFT OUTER JOIN과 RIGHT OUTER JOIN의 결과가 합쳐진(UNION) 
 -- FULL OUTER JOIN의 결과를 가져온다.
+
+-- 왼쪽 테이블과 오른쪽 테이블에서 두 테이블의 데이터를 합한 데이터에서 
+-- 공통된 데이터를 제외한 데이터만 추출하려면?
+-- NULL 데이터를 조회한다.
+-- => A와 B의 벤 다이어그램에서 (A-B)+(B-A)와 같다.
+
+-- FULL OUTER JOIN으로 조회한 결과에서 NULL만 조회
+-- 왼쪽 테이블: store, 오른쪽 테이블: address
+SELECT
+a.address_id AS a_address_id, a.store_id, 
+b.address, b.address_id AS b_address_id
+FROM store AS a
+LEFT OUTER JOIN address AS b 
+ON a.address_id = b.address_id
+WHERE b.address_id IS NULL
+
+UNION
+
+SELECT
+a.address_id AS a_address_id, a.store_id, 
+b.address, b.address_id AS b_address_id
+FROM store AS a
+RIGHT OUTER JOIN address AS b 
+ON a.address_id = b.address_id
+WHERE a.address_id IS NULL;
