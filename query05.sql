@@ -373,3 +373,34 @@ WHERE customer_id > ANY (
     WHERE first_name IN ('ROSA', 'ANA')
 );
 -- ROSA, ANA 각각 서브쿼리 결과값 customer_id가 112, 181인데, 이 데이터들보다 큰 값의 데이터를 조회한 것.
+
+-- 
+-- EXISTS 연산자:
+-- 서브쿼리의 결과값이 있는지 없는지를 확인해서 1행이라도 있으면 TRUE, 없으면 FALSE를 반환함.
+-- WHERE 절에 EXISTS를 사용해 
+-- 서브쿼리의 결과값이 1행이라도 있으면 TRUE를 반환해 메인쿼리를 실행하고
+-- 메인쿼리에 작성된 전체 데이터를 검색하는 쿼리 작성해보기
+SELECT * FROM customer
+WHERE EXISTS(
+	SELECT customer_id FROM customer 
+    WHERE first_name IN ('ROSA', 'ANA')
+);
+-- WHERE 절에 사용된 서브쿼리의 결과가 2건이므로 TRUE를 반환해 메인쿼리가 실행됨.
+
+-- 서브쿼리의 결과값이 없으면?
+-- FALSE를 반환하여 메인쿼리를 실행하지 않고, 아무것도 나타나지 않음.
+SELECT * FROM customer
+WHERE EXISTS(
+	SELECT customer_id FROM customer
+    WHERE first_name IN ('KANG')
+);
+-- WHERE 절에 사용된 서브쿼리 결과값이 없어서 FALSE를 반환해 아무 결과가 없음(NULL)
+
+-- EXISTS와 반대로 동작하는 NOT EXISTS를 사용한 서브쿼리
+SELECT * FROM customer
+WHERE NOT EXISTS(
+	SELECT customer_id FROM customer
+    WHERE first_name IN ('KANG')
+);
+-- WHERE 절에 사용된 서브쿼리 결과값이 없어서 FALSE로 판단하지만, 
+-- NOT EXISTS를 선언했으므로 반대로 TRUE를 반환하여 메인 쿼리가 실행됨
