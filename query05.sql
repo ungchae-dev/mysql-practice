@@ -416,3 +416,40 @@ WHERE customer_id = ALL (
 -- 이는 'customer_id가 112와 같고, 181과도 같아야 한다'
 -- 즉, 동시에 두 값 112, 181과 같아야 하므로 불가능한 조건이 된다.
 -- 그래서 결과값이 NULL인 상태.
+
+-- FROM 절에 서브쿼리(= inline view, 인라인 뷰) 사용하기
+-- FROM 절에 사용한 서브쿼리 결과는 테이블처럼 사용되어 다른 테이블과 다시 조인할 수 있음.
+-- 
+-- FROM 절에 사용하는 서브쿼리의 기본 형식
+-- SELECT
+-- [column_1], [column_2], .., [column_3]
+-- FROM [table] AS a
+--   INNER JOIN (SELECT [column] FROM [table] WHERE [column] = [value]) AS b ON [a.column] = [b.column]
+-- WHERE [column] = [value]
+-- => 내부 조인(INNER JOIN) 뿐만 아니라 외부 조인(OUTER JOIN)도 사용 가능
+
+-- 테이블 조인하기 (INNER JOIN으로 구성된 쿼리)
+-- 테이블 별칭) a: film 테이블, b: film_category 테이블, c: category 테이블
+SELECT
+	a.film_id, a.title, a.special_features, c.name
+FROM film AS a
+	INNER JOIN film_category AS b ON a.film_id = b.film_id
+    INNER JOIN category AS c ON b.category_id = c.category_id
+WHERE a.film_id > 10 AND a.film_id < 20;
+
+-- FROM 절에 INNER JOIN을 사용해 서브쿼리로 작성해보기 => inline view, 인라인 뷰
+-- 서브쿼리의 결과가 테이블처럼 동작해 다시 다른 테이블과 조인하는 방식으로 처리됨
+-- 테이블 별칭) a: film 테이블, b: film_category 테이블, c: category 테이블
+SELECT 
+	a.film_id, a.title, a.special_features, x.name
+FROM film AS a
+	INNER JOIN (
+		SELECT
+			b.film_id, c.name
+		FROM film_category AS b
+			INNER JOIN category AS c ON b.category_id = c.category_id
+		WHERE b.film_id > 10 AND b.film_id < 20
+    ) AS x ON a.film_id = x.film_id;
+-- 실행 결과 위의 쿼리문과 현재 쿼리문 모두 결과는 같음
+-- 조인으로 나온 결과를 서브쿼리로도 똑같이 작성할 수 있다.
+-- ps) 인라인 뷰, 소괄호 ()로 묶은 쿼리만 따로 드래그해 실행하는 것도 가능함.
