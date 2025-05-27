@@ -333,3 +333,14 @@ WHERE film_id IN (
 		INNER JOIN category AS b ON a.category_id = b.category_id
 	WHERE b.name = 'Action'
 );
+
+-- NOT IN을 활용한 서브쿼리 적용_film이 Action이 아닌 행 조회
+SELECT
+	film_id, title
+FROM film
+WHERE film_id NOT IN (
+	SELECT a.film_id
+    FROM film_category AS a
+		INNER JOIN category AS b ON a.category_id = b.category_id
+	WHERE b.name = 'Action'
+);
