@@ -453,3 +453,63 @@ FROM film AS a
 -- 실행 결과 위의 쿼리문과 현재 쿼리문 모두 결과는 같음
 -- 조인으로 나온 결과를 서브쿼리로도 똑같이 작성할 수 있다.
 -- ps) 인라인 뷰, 소괄호 ()로 묶은 쿼리만 따로 드래그해 실행하는 것도 가능함.
+
+-- 스칼라 서브쿼리(scalar subqueries)
+-- SELECT 절에 사용하는 서브쿼리
+-- SELECT 절에 사용하는 서브쿼리는 반드시 1개의 행을 반환해야 하므로
+-- 집계함수인 SUM, COUNT, MIN, MAX 등과 함께 사용하는 경우가 많음.
+-- 하지만 이럴 경우 성능 면에서 문제가 생기기 쉬워 집계 함수와 사용하는 걸 권하진 않는 편임.
+-- 
+-- problem) 서브쿼리 + 집계함수 성능 문제 발생 원인
+-- 서브쿼리가 SELECT 절에 있을 때
+-- 메인쿼리의 각 행마다 서브쿼리가 실행될 가능성이 큼.
+-- >>> 서브쿼리 안에 SUM, COUNT, MIN, MAX 등 집계함수를 쓰면
+-- 각 행별로 데이터를 집계하는 작업이 반복적으로 발생해 비용이 커질 수 있음
+-- 특히, 데이터가 많거나 복잡한 조건일 때
+-- 쿼리 실행 시간이 급격히 늘어나거나 서버 부하가 커질 수 있다. <<<
+-- 
+-- alternative) 대안 및 권장 사항
+-- JOIN이나 GROUP BY, 윈도우 함수로 집계 처리
+-- 한 번에 집계 결과를 얻도록 쿼리를 작성하는 게 성능상 훨씬 좋음
+-- 서브쿼리 결과를 미리 계산해 임시 테이블로 만들기 => 중복 계산 방지
+-- 인덱스 최적화 및 쿼리 튜닝 => 불가피하게 서브쿼리 + 집계가 필요한 경우에도 최적화 시도
+-- 
+-- ps) 윈도우 함수(Window Function)?
+-- 윈도우 함수는 테이블의 각 행에 대해 집계나 순위 계산 등을 수행하되, 
+-- 결과를 행 단위로 반환하는 함수.
+-- 전체 그룹 집계 결과를 하나의 값으로 반환하는 일반 집계 함수(SUM, COUNT 등)와 달리, 
+-- 각 행마다 집계 결과를 보여줄 수 있어서 훨씬 유연함.
+-- 
+-- 윈도우 함수 예시_(함수명: 설명)
+-- ROW_NUMBER(): 각 행에 고유 순위 번호 부여
+-- RANK(), DENSE_RANK(): 순위 계산(중복 순위 가능)
+-- SUM() OVER(): 누적 합계 또는 파티션별 합계 계산
+-- AVG() OVER(): 파티션별 평균 계산
+-- COUNT() OVER(): 파티션별 행 개수 계산
+-- 
+-- 스칼라 서브쿼리의 기본 형식
+-- SELECT
+--   [column], (SELECT <aggregate function, 집계 함수> [column] FROM [table_2]
+--   WHERE [table_2.column] = [table_1.column]) AS a
+-- FROM [table_1]
+-- WHERE [condition, 조건]
+
+-- 테이블 조인하기
+-- 테이블 별칭) a: film 테이블, b: film_category 테이블, c: category 테이블
+SELECT
+	a.film_id, a.title, a.special_features, c.name
+FROM film AS a
+	INNER JOIN film_category AS b ON a.film_id = b.film_id
+	INNER JOIN category AS c ON b.category_id = c.category_id
+WHERE a.film_id > 10 AND a.film_id < 20;
+
+-- SELECT 절에 서브쿼리 적용
+-- 테이블 별칭) a: film 테이블, b: film_category 테이블, c: category 테이블
+SELECT
+	a.film_id, a.title, a.special_features,
+    (SELECT c.name FROM film_category AS b
+    INNER JOIN category AS c ON b.category_id = c.category_id
+    WHERE a.film_id = b.film_id) AS name
+FROM film AS a
+WHERE a.film_id > 10 AND a.film_id < 20;
+-- 조인으로 나온 결과를 서브쿼리로도 똑같이 작성할 수 있다는 걸 알 수 있음.
