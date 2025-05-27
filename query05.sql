@@ -314,3 +314,22 @@ WHERE customer_id IN (
 	SELECT customer_id FROM customer 
     WHERE first_name IN ('ROSA', 'ANA')
 );
+
+-- 테이블 3개를 조인하는 쿼리
+SELECT
+	a.film_id, a.title
+FROM film AS a
+	INNER JOIN film_category AS b ON a.film_id = b.film_id
+    INNER JOIN category AS c ON b.category_id = c.category_id
+WHERE c.name = 'Action';
+
+-- IN을 활용한 서브쿼리 적용 <= 테이블 3개를 조인하는 쿼리와 같은 결과를 내는 쿼리
+SELECT
+	film_id, title
+FROM film 
+WHERE film_id IN (
+	SELECT a.film_id
+    FROM film_category AS a
+		INNER JOIN category AS b ON a.category_id = b.category_id
+	WHERE b.name = 'Action'
+);
