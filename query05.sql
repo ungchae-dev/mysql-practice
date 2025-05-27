@@ -404,3 +404,15 @@ WHERE NOT EXISTS(
 );
 -- WHERE 절에 사용된 서브쿼리 결과값이 없어서 FALSE로 판단하지만, 
 -- NOT EXISTS를 선언했으므로 반대로 TRUE를 반환하여 메인 쿼리가 실행됨
+
+-- ALL 연산자는 서브쿼리 결과값에 있는 모든 값을 만족하는 조건을 메인쿼리에서 검색하여 결과를 반환함.
+SELECT * FROM customer
+WHERE customer_id = ALL (
+	SELECT customer_id FROM customer
+    WHERE first_name IN ('ROSA', 'ANA')
+);
+-- 서브쿼리문에 해당하는 customer_id는 112, 181 두 가지.
+-- 그렇다면 WHERE customer_id = ALL (112, 181)인데
+-- 이는 'customer_id가 112와 같고, 181과도 같아야 한다'
+-- 즉, 동시에 두 값 112, 181과 같아야 하므로 불가능한 조건이 된다.
+-- 그래서 결과값이 NULL인 상태.
