@@ -277,3 +277,40 @@ WHERE customer_id = (
 	SELECT customer_id FROM customer 
 	WHERE first_name = 'ROSA'
 );
+
+-- 만약 WHERE 절에 사용한 서브쿼리가 여러 행을 반환하면?
+-- 비교 연산자 규칙에 어긋나므로 오류 발생
+SELECT * FROM customer
+WHERE customer_id = (
+	SELECT customer_id FROM customer 
+    WHERE first_name IN ('ROSA', 'ANA')
+);
+
+SELECT * FROM customer
+WHERE customer_id = (
+	SELECT customer_id FROM customer 
+	WHERE first_name IN ('ROSA', 'ANA')
+ );
+-- Error Code: 1242. Subquery returns more than 1 row
+-- 서브쿼리 반환값이 1행 이상이어서 오류가 발생한 것.
+
+-- 다중 행 서브쿼리 사용하기
+-- 다중 행 서브쿼리: 서브쿼리에서 결과로 2행 이상이 반환되는 경우를 말함
+-- 서브쿼리가 다중 행을 반환하기 위해선 다중 행 연산자
+-- IN, ANY, EXISTS, ALL 등을 활용함.
+
+-- IN 연산자를 활용한 다중 행 서브쿼리의 기본 형식
+-- SELECT [column]
+-- FROM [table] 
+-- WHERE [column] IN (SELECT [column] FROM [table])
+
+-- IN 연산자를 활용한 다중 행 서브쿼리 적용_1
+SELECT * FROM customer
+WHERE first_name IN ('ROSA', 'ANA');
+
+-- IN 연산자를 활용한 다중 행 서브쿼리 적용_2
+SELECT * FROM customer
+WHERE customer_id IN (
+	SELECT customer_id FROM customer 
+    WHERE first_name IN ('ROSA', 'ANA')
+);
