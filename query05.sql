@@ -344,3 +344,32 @@ WHERE film_id NOT IN (
 		INNER JOIN category AS b ON a.category_id = b.category_id
 	WHERE b.name = 'Action'
 );
+
+-- ANY를 사용하는 서브쿼리 3가지
+-- ANY를 함께 사용해 서브쿼리의 결과값이 여러 개여도
+-- 일치하는 모든 행을 메인쿼리에서 조회 가능
+-- (1) = ANY를 활용한 서브쿼리
+SELECT * FROM customer
+WHERE customer_id = ANY (
+	SELECT customer_id FROM customer
+    WHERE first_name IN ('ROSA', 'ANA')
+);
+-- ROSA, ANA 각각 서브쿼리 결과값 customer_id가 112, 181인 데이터임.
+
+-- 서브쿼리의 결과값보다 작은 값을 조건으로 하여 데이터(행)을 반환하는 쿼리
+-- (2) < ANY를 활용한 서브쿼리
+SELECT * FROM customer
+WHERE customer_id < ANY (
+	SELECT customer_id FROM customer
+    WHERE first_name IN ('ROSA', 'ANA')
+);
+-- ROSA, ANA 각각 서브쿼리 결과값 customer_id가 112, 181인 데이터인데, 
+-- 이보다 작은 값의 데이터를 조회한 것.
+
+-- (3) > ANY를 활용한 서브쿼리
+SELECT * FROM customer
+WHERE customer_id > ANY (
+	SELECT customer_id FROM customer 
+    WHERE first_name IN ('ROSA', 'ANA')
+);
+-- ROSA, ANA 각각 서브쿼리 결과값 customer_id가 112, 181인데, 이 데이터들보다 큰 값의 데이터를 조회한 것.
