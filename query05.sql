@@ -513,3 +513,249 @@ SELECT
 FROM film AS a
 WHERE a.film_id > 10 AND a.film_id < 20;
 -- 조인으로 나온 결과를 서브쿼리로도 똑같이 작성할 수 있다는 걸 알 수 있음.
+
+
+USE sakila; -- sakila DB 사용
+-- CTE (Common Table Expression) 공통 테이블 표현식?
+-- 실제 데이터베이스에 생성되는 테이블은 아니지만
+-- 쿼리 실행 결과를 테이블처럼 활용하기 위한 논리적인 테이블을 만들 때 활용하는 표현식
+-- 목적에 따라 1)일반 공통 테이블 표현식, 결과를 재사용하는 2)재귀 공통 테이블 표현식으로 나뉨
+
+-- 일반 CTE의 기본 형식
+-- WITH [table] (column1, column2, ...)
+-- AS
+-- (
+-- 	<SELECT ...>
+-- )
+-- SELECT [column] FROM [table];
+
+-- 일반 CTE로 데이터 조회하기
+WITH cte_customer (customer_id, first_name, email)
+AS
+(
+	SELECT customer_id, first_name, email
+    FROM customer 
+    WHERE customer_id >= 10 AND customer_id < 100
+)
+SELECT * FROM cte_customer;
+-- 일반 CTE는 복잡한 쿼리를 단순하게 만들 때 유용하게 사용된다.
+
+-- 일반 CTE에서 열(column) 불일치로 인한 오류 발생 예시
+WITH cte_customer (customer_id, first_name, email) 
+AS
+(
+	SELECT customer_id, first_name, last_name, email 
+    FROM customer
+    WHERE customer_id >= 10 AND customer_id < 100
+)
+SELECT * FROM cte_customer;
+-- 오류가 발생한 이유는?
+-- CTE에 정의된 열(column)과 SELECT문에 정의된 열의 개수가 달라서 오류가 발생한 것.
+
+-- UNION으로 CTE 결합하기
+-- UNION 연산자(UNION, UNION ALL 등)는 여러 쿼리의 결과를 
+-- 하나의 데이터 집합으로 결합하는 데 사용하는 명령문으로, 
+-- CTE 뿐만 아니라 다양한 쿼리문에서 사용 가능함.
+-- 그리고 중복 데이터를 제거하는 연산을 포함하는 UNION 대신 UNION ALL을 사용하는 것을 권장함
+
+-- UNION ALL로 CTE 결합하기
+WITH cte_customer (customer_id, first_name, email) 
+AS
+(
+	SELECT customer_id, first_name, email 
+    FROM customer
+    WHERE customer_id >= 10 AND customer_id <= 15
+    
+    UNION ALL
+    
+    SELECT customer_id, first_name, email 
+    FROM customer
+    WHERE customer_id >= 25 AND customer_id <= 30
+)
+SELECT * FROM cte_customer;
+-- CTE 내부에 정의한 1번째 SELECT 결과 집합과
+-- 2번째 SELECT 결과 집합을 UNION ALL으로 합쳐 하나의 데이터 집합으로 조회된 걸 확인할 수 있다.
+
+-- 교집합으로 CTE 결합하기 (지금 사용중인 MySQL Workbench 8.0 CE 버전에서 INTERSECT를 지원하지 않으므로 EXISTS와 IN으로 대체)
+-- 1) IN: 단일 컬럼 비교 시 사용
+-- 2) EXISTS: 다중 컬럼 비교 시 사용 및 NULL 값 처리를 안전하게 함
+-- 3) INNER JOIN: 테이블 사이의 JOIN 조건에 맞는 데이터를 반환
+
+-- 1) IN 연산자로 CTE 결합하기 (단일 컬럼일 때)
+WITH cte_customer (customer_id, first_name, email) 
+AS
+(
+	SELECT customer_id, first_name, email
+    FROM customer
+    WHERE customer_id >= 10 AND customer_id <= 15
+    AND customer_id IN (
+		SELECT customer_id
+		FROM customer
+		WHERE customer_id >= 12 AND customer_id <= 20
+	)
+)
+SELECT * FROM cte_customer;
+
+-- 2) EXISTS로 CTE 결합하기 (다중 컬럼일 때)
+WITH cte_customer (customer_id, first_name, email)
+AS 
+(
+	SELECT DISTINCT customer_id, first_name, email
+    FROM customer c1
+    WHERE customer_id >= 10 AND customer_id <= 15
+    AND EXISTS (
+		SELECT 1 FROM customer c2 
+        WHERE c2.customer_id = c1.customer_id
+        AND c2.first_name = c1.first_name 
+        AND c2.email = c1.email 
+        AND c2.customer_id >= 12 AND C2.customer_id <= 20
+    )
+)
+SELECT * FROM cte_customer;
+-- SELECT 1: 존재 여부만 확인
+-- c1에서 customer_id가 10~15인 각 행을 하나씩 검사
+-- 각 행마다 c2에서 동일한 customer_id, first_name, email을 가지면서 
+--  customer_id가 12~20 범위에 있는 행이 존재하는지 확인
+-- 존재하면 그 행을 결과에 포함
+-- 결과: customer_id가 12~15인 고객들 (교집합)
+
+-- 3) INNER JOIN으로 CTE 결합하기 (테이블 사이의 JOIN 조건에 맞는 데이터를 반환)
+WITH cte_customer (customer_id, first_name, email) 
+AS 
+(
+	SELECT DISTINCT t1.customer_id, t1.first_name, t1.email 
+    FROM (
+		SELECT customer_id, first_name, email
+        FROM customer 
+        WHERE customer_id >= 10 AND customer_id <= 15
+    ) t1 
+    INNER JOIN (
+		SELECT customer_id, first_name, email
+        FROM customer 
+        WHERE customer_id >= 12 AND customer_id <= 20
+    ) t2 ON t1.customer_id = t2.customer_id
+		AND t1.first_name = t2.first_name 
+        AND t1.email = t2.email
+)
+SELECT * FROM cte_customer;
+-- t1: customer_id가 10~15인 고객들 조회
+-- t2: customer_id가 12~20인 고객들 조회
+-- 두 결과에서 customer_id, first_name, email이 모두 일치하는 행들만 연결
+-- 결과: customer_id가 12~15인 고객들 (교집합)
+
+-- 교집합으로 CTE 결합하기 (지금 사용중인 MySQL Workbench 8.0 CE 버전에서 EXCEPT를 지원하지 않으므로 NOT EXISTS와 NOT IN으로 대체)
+-- 1) NOT IN: 단일 컬럼 비교 시 사용
+-- 2) NOT EXISTS: 다중 컬럼 비교 시 사용 및 NULL 값 처리를 안전하게 함
+-- 3) LEFT JOIN & IS NULL: 테이블 사이의 JOIN 조건에 맞는 데이터를 반환
+
+-- 차집합으로 CTE 결합하기
+-- 1) NOT IN으로 CTE 결합하기 (단일 컬럼일 때)
+WITH cte_customer (customer_id, first_name, email) 
+AS (
+	SELECT customer_id, first_name, email
+    FROM customer 
+    WHERE customer_id >= 10 AND customer_id <= 15
+    AND customer_id NOT IN (
+		SELECT customer_id
+		FROM customer 
+		WHERE customer_id >= 12 AND customer_id <= 20
+    )
+)
+SELECT * FROM cte_customer;
+
+-- 2) NOT EXISTS로 CTE 결합하기 (직관적)
+WITH cte_customer (customer_id, first_name, email) 
+AS (
+    SELECT DISTINCT customer_id, first_name, email
+    FROM customer c1
+    WHERE customer_id >= 10 AND customer_id <= 15
+    AND NOT EXISTS (
+		SELECT 1 FROM customer c2 -- SELECT 1: 존재 여부만 확인
+		WHERE c2.customer_id = c1.customer_id
+        AND c2.first_name = c1.first_name 
+        AND c2.email = c1.email 
+        AND c2.customer_id >= 12 AND c2.customer_id <= 20
+	)
+)
+SELECT * FROM cte_customer;
+
+-- 3) LEFT JOIN & IS NULL로 CTE 결합하기
+WITH cte_customer 
+AS (
+	SELECT DISTINCT t1.customer_id, t1.first_name, t1.email 
+    FROM (
+		SELECT customer_id, first_name, email 
+        FROM customer 
+        WHERE customer_id >= 10 AND customer_id <= 15
+    ) t1 
+    LEFT JOIN (
+		SELECT customer_id, first_name, email 
+        FROM customer 
+        WHERE customer_id >= 12 AND customer_id <= 20
+    ) t2 ON t1.customer_id = t2.customer_id
+		AND t1.first_name = t2.first_name 
+        AND t1.email = t2.email
+	WHERE t2.customer_id IS NULL -- t2에 없는 것만 선택
+)
+SELECT * FROM cte_customer;
+
+-- 2-2) 2번 NOT EXISTS 쿼리문에서 customer_id의 순서를 변경하여 CTE 결합하기
+WITH cte_customer (customer_id, first_name, email) 
+AS (
+    SELECT DISTINCT customer_id, first_name, email
+    FROM customer c1
+    WHERE customer_id >= 12 AND customer_id <= 20 -- 1)
+    AND NOT EXISTS (
+		SELECT 1 FROM customer c2 -- SELECT 1: 존재 여부만 확인
+		WHERE c2.customer_id = c1.customer_id
+        AND c2.first_name = c1.first_name 
+        AND c2.email = c1.email 
+        AND c2.customer_id >= 10 AND c2.customer_id <= 15 -- 2)
+	)
+)
+SELECT * FROM cte_customer;
+-- 결과는?
+-- 당연히 customer_id가 12 이상 20 이하에서 10 이상 15 이하를 제외한 나머지
+-- customer_id = 16 이상 20 이하의 데이터만 남음
+
+-- 재귀 CTE
+-- 재귀?
+--  함수 내부에서 함수가 자기 자신을 다시 호출하는 것
+-- 재귀 CTE?
+--  CTE 결과를 CTE 내부 쿼리에서 재사용함으로써 반복 실행하는 쿼리 구조
+-- 재귀 CTE는 조직도와 같은 계층 데이터를 검색할 때 많이 사용되며, 실행 과정이 복잡함.
+
+-- 재귀 CTE의 기본 형식
+-- WITH RECURSIVE [CTE_table] (column 1, column 2, ...)
+-- AS (
+-- 	SELECT * FROM table A -- 쿼리 1: 앵커 멤버
+--     UNION ALL 
+--     SELECT * FROM table B 
+--     JOIN CTE_table -- 쿼리 2: 재귀 멤버
+-- )
+-- SELECT * FROM [CTE_table];
+
+-- 재귀 CTE의 조건:
+-- 1) 2개 이상의 SELECT문을 사용할 것
+-- 2) 앵커 멤버(anchor member)와 재귀 멤버(recursive member)를 포함해야 하며, 
+--  앵커 멤버는 1번째 재귀 멤버 앞에 있을 것
+-- 3) 재귀 멤버 열(column)의 데이터 유형은 앵커 멤버 열의 데이터 유형과 일치할 것
+-- + 앵커 멤버와 재귀 멤버는 여러 개 정의할 수 있음
+
+-- 피보나치 수열?
+-- 숫자 0과 1 (또는 1과 1)로 시작하며
+-- 두 수를 합친 값이 그 다음 수가 되어 이어진다.
+-- ex) 0, 1, 1, 2, 3, 5, 8, 13, ...
+-- 재귀 CTE는 재귀 멤버에 의해 생성된 각 행이 이전의 결과 행을 참조하여
+-- 다시 계산하는 방식이므로 피보나치 수열을 생성할 수 있음.
+
+-- 재귀 CTE로 처음 2개의 숫자로 0과 1을 사용하여 20개의 피보나치 수열 생성하기
+WITH RECURSIVE fibonacci_number (n, fibonacci_n, next_fibonacci_n) 
+AS (
+	SELECT 1, 0, 1
+    UNION ALL
+    SELECT n + 1, next_fibonacci_n, fibonacci_n + next_fibonacci_n
+    FROM fibonacci_number
+    WHERE n < 20
+)
+SELECT * FROM fibonacci_number;
