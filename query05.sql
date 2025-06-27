@@ -772,3 +772,29 @@ FROM country AS co
 	INNER JOIN city AS ci
     ON co.Code = ci.CountryCode
 WHERE co.Name = 'United States';
+
+-- Q2. world 데이터베이스의 city 테이블에서 인구가 가장 많은 도시 상위 10개를 구하고
+-- country 테이블에서 해당 도시의 국가 이름과 국가 총 인구, GNP, 수명 등의 정보를 
+-- 조회하는 쿼리를 작성하세요. 이 때, 조인 또는 서브 쿼리를 활용해 쿼리를 작성해보세요.
+
+-- A1. using INNER JOIN
+SELECT 
+	ci.Name AS city_name, ci.CountryCode, ci.District, ci.Population AS city_population, 
+    co.Name AS country_name, co.Population AS country_population, co.GNP, co.LifeExpectancy
+FROM city AS ci
+	INNER JOIN country AS co 
+    ON ci.CountryCode = co.Code
+ORDER BY ci.Population DESC LIMIT 10;
+
+-- A2. using Subquery
+SELECT
+	ci.Name AS city_name, ci.CountryCode, ci.District, ci.Population, 
+    co.Name AS country_name, co.Population, co.GNP, co.LifeExpectancy
+FROM (
+	SELECT
+		Name, CountryCode, District, Population
+	FROM city
+    ORDER BY Population DESC LIMIT 10
+) AS ci
+	INNER JOIN country AS co 
+    ON ci.CountryCode = co.Code;
