@@ -863,3 +863,53 @@ FROM customer AS c
     INNER JOIN cte_film AS cf ON cp.film_id = cf.film_id
 GROUP BY c.customer_id, c.first_name, c.last_name ,cf.category_name
 ORDER BY c.customer_id;
+
+-- Q6. 다음과 같이 어떤 조직의 데이터가 있을 때, 
+-- 각 직원의 레벨 및 관리자 이름을 조회하는 쿼리를 작성하세요.
+-- 이때, 레벨 숫자가 낮을수록 높은 직급입니다.
+
+DROP TABLE IF EXISTS emp;
+CREATE TABLE emp (
+	employee_id int NOT NULL PRIMARY KEY, 
+	employee_name varchar(50) NOT NULL, 
+	manager_id int NULL
+);
+
+INSERT INTO emp VALUES (101, '이지연', NULL);
+INSERT INTO emp VALUES (102, '강정훈', 101);
+INSERT INTO emp VALUES (103, '임도환', 101);
+INSERT INTO emp VALUES (104, '민가영', 102);
+INSERT INTO emp VALUES (105, '김민찬', 102);
+INSERT INTO emp VALUES (106, '장미선', 103);
+INSERT INTO emp VALUES (107, '김시영', 103);
+INSERT INTO emp VALUES (108, '이재윤', 105);
+INSERT INTO emp VALUES (109, '오하나', 105);
+INSERT INTO emp VALUES (110, '심성우', 105);
+
+SELECT * FROM emp;
+
+-- Query
+WITH RECURSIVE cte_emp (
+	employee_id, employee_name, manager_id, employee_level
+) AS (
+	SELECT employee_id, employee_name, manager_id, 1 AS employee_level
+    FROM emp
+    WHERE manager_id IS NULL
+    
+    UNION ALL
+    
+    SELECT
+		e.employee_id, e.employee_name, e.manager_id, ce.employee_level
+	+1
+    FROM emp AS e
+		INNER JOIN cte_emp AS ce
+        ON e.manager_id = ce.employee_id
+)
+SELECT
+	employee_name, employee_level,
+    (SELECT employee_name FROM emp 
+    WHERE employee_id = ce2.manager_id) 
+	AS manager
+FROM cte_emp AS ce2
+ORDER BY employee_level, manager_id;
+
