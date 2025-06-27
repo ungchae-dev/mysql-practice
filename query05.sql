@@ -759,3 +759,16 @@ AS (
     WHERE n < 20
 )
 SELECT * FROM fibonacci_number;
+
+-- FINAL QUIZ
+-- Q1. world 데이터베이스에는 country, city 테이블이 있습니다. 
+-- country 테이블의 Name 열에서 'United States'인 데이터와 city 테이블에서
+-- 해당 국가와 일치하는 데이터를 조회하는 쿼리를 작성하세요.
+-- 이 때, 조인을 활용한 쿼리를 작성해보세요.
+use world;
+
+SELECT co.*, ci.*
+FROM country AS co
+	INNER JOIN city AS ci
+    ON co.Code = ci.CountryCode
+WHERE co.Name = 'United States';
