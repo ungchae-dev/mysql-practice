@@ -798,3 +798,22 @@ FROM (
 ) AS ci
 	INNER JOIN country AS co 
     ON ci.CountryCode = co.Code;
+
+-- Q3. world 데이터베이스에서 countrylanguage 테이블과 country 테이블을 조합하여
+-- 사용 언어가 English인 국가의 정보를 조회하는 쿼리를 작성하세요.
+-- 이 때, JOIN으로 조회하는 쿼리와 Subquery로 조회하는 쿼리 등 원하는 방법으로 쿼리를 작성하세요.
+
+-- A1. using INNER JOIN
+SELECT c.*
+FROM countrylanguage AS cl
+	INNER JOIN country AS c
+    ON cl.CountryCode = c.Code
+WHERE cl.Language = 'English';
+
+-- A2. using Subquery
+SELECT * FROM country
+WHERE Code IN (
+	SELECT CountryCode
+    FROM countrylanguage
+    WHERE Language = 'English'
+);
