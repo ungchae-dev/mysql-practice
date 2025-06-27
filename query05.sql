@@ -817,3 +817,20 @@ WHERE Code IN (
     FROM countrylanguage
     WHERE Language = 'English'
 );
+
+-- Q4. sakila 데이터베이스에는 actor, film, film_actor, film_category, category 테이블이 있습니다.
+-- category 테이블의 name 열(column)이 'Action'인 데이터와 관련된
+-- 배우 이름(first_name, last_name), 영화 제목(title)과 개봉 연도(release_year)를
+-- 조회하는 쿼리를 작성하세요.
+
+USE sakila;
+
+SELECT 
+	a.first_name, a.last_name, f.title, f.release_year, c.name AS category_name
+FROM actor AS a
+    INNER JOIN film_actor AS fa ON a.actor_id = fa.actor_id
+    INNER JOIN film AS f ON fa.film_id = f.film_id
+    INNER JOIN film_category AS fc ON f.film_id = fc.film_id
+    INNER JOIN category AS c ON fc.category_id = c.category_id
+WHERE c.name = 'Action'
+ORDER BY title;
