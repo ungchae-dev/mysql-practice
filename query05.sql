@@ -834,3 +834,32 @@ FROM actor AS a
     INNER JOIN category AS c ON fc.category_id = c.category_id
 WHERE c.name = 'Action'
 ORDER BY title;
+
+-- Q5. sakila 데이터베이스의 film, category, rental, inventory, payment 테이블을 활용해
+-- 고객이 어떤 장르를 주로 선호하는지 알기 위해 장르별 dvd 렌탈 횟수와 장르별 결제한 금액을 조회하고
+-- 이를 고객 번호와 고객 이름을 함께 넣어 조회하는 쿼리를 작성하세요.
+
+WITH cte_film (film_id, title, category_name)
+AS (
+	SELECT f.film_id, f.title, c.name AS category_name
+    FROM film AS f
+		INNER JOIN film_category AS fc ON f.film_id = fc.film_id
+        INNER JOIN category AS c ON fc.category_id = c.category_id
+), 
+cte_payment (customer_id, amount, film_id)
+AS (
+	SELECT r.customer_id, p.amount, i.film_id
+    FROM rental AS r
+    INNER JOIN payment AS p ON r.rental_id = p.rental_id
+    INNER JOIN inventory AS i ON r.inventory_id = i.inventory_id
+)
+SELECT 
+	c.customer_id, c.first_name, c.last_name, 
+    cf.category_name, 
+    COUNT(*) AS dvd_rental_count, 
+    SUM(cp.amount) AS payment_amount_by_genre
+FROM customer AS c
+	INNER JOIN cte_payment AS cp ON c.customer_id = cp.customer_id
+    INNER JOIN cte_film AS cf ON cp.film_id = cf.film_id
+GROUP BY c.customer_id, c.first_name, c.last_name ,cf.category_name
+ORDER BY c.customer_id;
