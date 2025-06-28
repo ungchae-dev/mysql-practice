@@ -104,3 +104,61 @@ SELECT CAST(9223372036854775807 AS UNSIGNED) +1;
 
 -- A2. CONVERT 함수를 통해 overflow 방지
 SELECT CONVERT(9223372036854775807, UNSIGNED) +1;
+
+-- NULL을 대체하는 함수 - IFNULL, COALESCE
+-- NULL: 어떤 연산 작업을 진행해도 NULL이 반환됨.
+-- 그래서 테이블에 NULL이 있는 경우 문자열 또는 숫자로 데이터를 바꾸는 게 좋다.
+-- NULL을 치환하기 위해 IFNULL 함수를 사용
+-- IFNULL 함수를 사용하면 NULL을 대체할 다른 값으로 변환함.
+
+-- IFNULL 함수의 기본 형식
+-- IFNULL(열, 대체할 값)
+
+-- COALESCE 함수도 NULL을 대체하는데 여러 열 이름을 인자로 전달함
+-- COALESCE 함수의 기본 형식
+-- COALESCE(열 1, 열 2, ...)
+-- => COALESCE 함수는 IFNULL과 달리 NULL이 아닌 값이 나올 때까지
+-- 후보군의 여러 열을 입력할 수 있음
+
+-- doit_null 테이블 생성
+CREATE TABLE doit_null (
+	col_1 INT, 
+    col_2 VARCHAR(10), 
+    col_3 VARCHAR(10), 
+    col_4 VARCHAR(10), 
+    col_5 VARCHAR(10)
+);
+
+INSERT INTO doit_null VALUES (1, NULL, 'col_3', 'col_4', 'col_5');
+INSERT INTO doit_null VALUES (2, NULL, 'col_3', 'col_4', 'col_5');
+INSERT INTO doit_null VALUES (2, NULL, NULL, NULL, 'col_5');
+INSERT INTO doit_null VALUES (3, NULL, NULL, NULL, NULL);
+
+SELECT * FROM doit_null;
+
+-- col_2 열의 값이 NULL이면 IFNULL 함수를 통해 공백 ('')으로 대체
+SELECT col_1, IFNULL(col_2, '') AS col_2, col_3, col_4, col_5
+FROM doit_null
+WHERE col_1 = 1;
+
+-- col_2 열의 값이 NULL이면 col_3 열의 값으로 대체
+SELECT col_1, IFNULL(col_2, col_3) AS col_2, col_3, col_4, col_5
+FROM doit_null 
+WHERE col_1 = 1;
+-- 실행 결과: col_2 열의 데이터가 col_3 열에 있던 col_3 데이터로 대체됨
+
+-- COALESCE 함수는 1번째 인자로 전달한 열에 NULL이 있을 때
+-- 그 다음 인자로 작성한 열의 데이터로 대체함.
+-- 만약 이 함수에 N개의 인자를 작성햇다면? 순차로 대입함
+
+-- col_2의 값이 NULL일 때 다음 인자인 col_3의 데이터도 NULL이면
+-- 그 다음 인자인 col_4의 데이터를 확인하여 대입하는 쿼리
+SELECT col_1, COALESCE(col_2, col_3, col_4, col_5)
+FROM doit_null
+WHERE col_1 = 2;
+
+-- 만약 마지막 인자까지도 NULL이 저장되어있다면?
+SELECT col_1, COALESCE(col_2, col_3, col_4, col_5)
+FROM doit_null
+WHERE col_1 = 3;
+-- 실행 결과, 결국 NULL을 반환.
