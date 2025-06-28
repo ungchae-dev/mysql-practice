@@ -262,3 +262,43 @@ SELECT 'Do it! MySQL', SUBSTRING('Do it! MySQL', 4, 2);
 -- SUBSTRING 함수에 열 이름 전달 (first_name 열에 저장된 데이터의 2번째 문자부터 문자 3개를 반환)
 SELECT first_name, SUBSTRING(first_name, 2, 3) 
 FROM customer;
+
+-- SUBSTRING 함수는 POSITION 함수와 함께 사용할 수 있다.
+-- POSITION 함수로 @ 문자 위치 계산 후 SUBSTRING 함수를 통해 @ 바로 앞까지의 문자열을 조회하는 쿼리
+SELECT SUBSTRING('abc@gmail.com', 1, POSITION('@' IN 'abc@gmail.com') -1);
+-- 문자열의 1번째 문자부터 시작해 POSITION 함수를 통해
+-- @ 까지의 문자열의 크기를 반환 후 그 수에서 -1을 더한 크기만큼(3개의 문자열)의 값인
+-- abc를 출력함
+
+-- 특정 문자를 다른 문자로 대체하는 함수 - REPLACE
+-- REPLACE 함수: 지정한 문자를 다른 문자로 대체하는 함수
+-- customer 테이블의 first_name 열에서 A로 시작하는 데이터의 A를 C로 대체
+SELECT first_name, REPLACE(first_name, 'A', 'C')
+FROM customer
+WHERE first_name LIKE 'A%';
+
+-- 문자를 반복하는 함수 - REPEAT
+-- REPEAT 함수: 지정한 문자를 반복할 때 사용하는 함수
+-- 이때, 반복할 문자와 반복횟수를 인자로 전달
+
+-- REPEAT 함수로 문자 0을 10번 반복하여 출력
+SELECT REPEAT('0', 10);
+-- ※ 숫자에 ''를 붙이면? 문자열이 됨.
+
+-- REPEAT 함수는 REPLACE 함수와 함께 사용할 수 있다.
+-- REPEAT과 REPLACE 함수 조합
+SELECT first_name, REPLACE(first_name, 'A', REPEAT('C', 10))
+FROM customer 
+WHERE first_name LIKE '%A%'
+ORDER BY first_name;
+-- %A%를 사용해 A가 포함도니 모든 데이터를 조회한 뒤
+-- 대문자 A를 10개의 C로 대체함.
+
+-- 공백 문자를 생성하는 함수 - SPACE
+-- SPACE 함수는 지정한 인자만큼 공백을 생성한다.
+-- CONCAT 함수로 문자열을 연결할 때 열과 열 사이에 공백 문자 10개를 추가하는 쿼리
+SELECT CONCAT(first_name, SPACE(10), last_name)
+FROM customer;
+
+SELECT CONCAT(first_name, ' ', last_name)
+FROM customer;
