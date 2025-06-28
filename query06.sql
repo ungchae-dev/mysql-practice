@@ -162,3 +162,15 @@ SELECT col_1, COALESCE(col_2, col_3, col_4, col_5)
 FROM doit_null
 WHERE col_1 = 3;
 -- 실행 결과, 결국 NULL을 반환.
+
+-- 소문자 또는 대문자로 변경하는 함수 - LOWER, UPPER
+-- LOWER: 대문자를 소문자로 변경하는 함수
+-- UPPER: 소문자를 대문자로 변경하는 함수
+
+-- LOWER 함수로 소문자로, UPPER 함수로 대문자로 변경
+SELECT 'DO IT! MYSQL <-> do it! mysql', 
+	LOWER('DO IT! MYSQL'), UPPER('do it! mysql');
+    
+-- LOWER 함수로 소문자로, UPPER 함수로 대문자로 변경 (2)
+SELECT email, LOWER(email), UPPER(email)
+FROM customer;
