@@ -36,3 +36,71 @@ FROM customer;
 -- ※ in MySQL, +: 문자열끼리 연결할 때 사용
 -- in MySQL, ||: 논리 연산자 OR
 -- in Oracle, ||: 문자열끼리 연결할 때 사용
+
+-- 데이터 형 변환 함수 - CAST, CONVERT
+-- 명시적 형 변환: 사용자가 임의로 형 변환하는 과정
+-- 형 변환을 위해 사용하는 함수의 예로 CAST, CONVERT가 있음
+
+-- CAST 함수의 기본 형식
+-- SELECT CAST(열 AS 데이터 유형) FROM 테이블;
+
+-- CONVERT 함수의 기본 형식
+-- SELECT CONVERT(열, 데이터 유형) FROM 테이블;
+-- => CONVERT 함수는 CAST 함수와 달리 문자열 집합을 다른 문자열 집합으로 변환할 수 있음
+
+-- CAST, CONVERT에 사용 가능한 데이터 유형
+-- • BINARY • CHAR • DATE • DATETIME • TIME 
+-- • DECIMAL • JSON • NCHAR • SIGNED[INTEGER] • UNSIGNED[INTEGER]
+-- JSON은 MySQL 5.7.8 version부터 제공됨
+
+-- CAST 함수를 통해 문자열 '2'라는 글자를 부호가 없는 정수형 2로 변경
+SELECT
+	4 / '2', -- 문자열 2
+    4 / 2, -- 정수형 숫자 2
+    4 / CAST('2' AS UNSIGNED); -- 부호가 없는 정수형으로 변경
+    
+-- NOW 함수로 현재 날짜와 시간 출력
+SELECT NOW();
+
+-- CAST 함수를 통해 NOW 함수로 가져온 값을 정수형으로 변환
+SELECT CAST(NOW() AS SIGNED);
+-- NOW() 함수 실행 결과와 달리, 날짜와 시간을 구분하는 기호 없이
+-- 날짜가 숫자 형식으로 이루어진 데이터가 출력됨
+
+-- 반대로 CAST 함수로 숫자형을 날짜형으로 변환
+SELECT CAST(20250628 AS DATE);
+-- 결과는 년,월,일 구분 가능
+
+-- CAST 함수로 숫자형을 문자열로 변환
+SELECT CAST(20250628 AS CHAR);
+
+-- 다음으로 CONVERT 함수는 인자 2개를 넘겨 사용함
+-- CONVERT 함수는 CAST 함수와 사용법이 거의 비슷하지만
+-- CAST에서는 지원하지 않는 스타일을 정의할 수 있음.
+
+-- CONVERT 함수로 날짜형을 정수형으로 변환
+SELECT CONVERT(NOW(), SIGNED);
+
+-- CONVERT 함수로 숫자형을 날짜형으로 변환
+SELECT CONVERT(20250628, DATE);
+
+-- CAST, CONVERT 함수 사용 시, 
+-- AS CHAR(5) 또는 CHAR(5)와 같이 문자열의 길이를 지정할 수 있고
+-- 문자열 길이 지정 시, 문자열을 변환할 때 CHAR(5)와 같이
+-- 지정한 값보다 문자열 길이가 작으면 문자열이 잘려 출력됨
+SELECT CONVERT(20250628, CHAR(5));
+-- CHAR(5)로 길이를 5로 지정했기 때문에 문자열이 5개까지만 출력됨.
+
+-- 만약, 엄청 큰 수에 1을 더하는 쿼리를 작성하면?
+SELECT 9223372036854775807 +1;
+-- 실행 결과: Error Code: 1690. BIGINT value is out of range in '(9223372036854775807 + 1)'
+-- 가장 큰 숫자형(BIGINT)의 범위를 넘어 overflow가 발생한다.
+-- overflow(오버플로)?
+-- '넘쳐흐르다'라는 의미로, 컴퓨터에서 오버플로는 데이터 유형에 따른 한계값을 넘었다는 뜻.
+
+-- 오버플로를 예방하고 싶다면?
+-- A1. CAST 함수를 통해 입력값을 UNSIGNED로 변경하여 연산하면 OK.
+SELECT CAST(9223372036854775807 AS UNSIGNED) +1;
+
+-- A2. CONVERT 함수를 통해 overflow 방지
+SELECT CONVERT(9223372036854775807, UNSIGNED) +1;
