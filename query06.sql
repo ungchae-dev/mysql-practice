@@ -174,3 +174,35 @@ SELECT 'DO IT! MYSQL <-> do it! mysql',
 -- LOWER 함수로 소문자로, UPPER 함수로 대문자로 변경 (2)
 SELECT email, LOWER(email), UPPER(email)
 FROM customer;
+
+-- 공백을 제거하는 함수 - LTRIM, RTRIM, TRIM
+-- 만약, 사용자가 회원가입을 할 때 실수로 ID나 Password 뒤에
+-- 의도하지 않은 공백을 입력하고 DataBase에서 공백을 허용했다면?
+-- 이후 사용자가 로그인할 때 아이디, 비밀번호를 제대로 입력해도
+-- 공백이 입력되지 않아 인증 처리가 제대로 되지 않는 문제가 발생함
+
+-- 이같이 실수로 공백을 입력해도 데이터가 공백 없이 저장되도록 공백을 제거하는 함수가 있는데
+-- LTRIM, RTRIM, TRIM 함수가 그에 해당된다.
+-- LTRIM: 문자열의 왼쪽(앞, LEFT) 공백을 제거
+-- RTRIM: 문자열의 오른쪽(뒤, RIGHT) 공백을 제거
+-- TRIM: 양쪽 공백을 모두 제거
+
+-- LTRIM 함수로 왼쪽 공백 제거
+SELECT '       Do it! MySQL', LTRIM('       Do it! MySQL');
+
+-- RTRIM 함수로 왼쪽 공백 제거
+SELECT 'Do it! MySQL       ', RTRIM('Do it! MySQL       ');
+
+-- TRIM 함수로 문자열의 양쪽 공백 제거
+SELECT '       Do it! MySQL       ', TRIM('       Do it! MySQL       ');
+
+-- TRIM 함수는 공백이 아닌 앞뒤에 있는 특정 문자를 제거하는 기능도 있다.
+-- TRIM 함수로 문자열 양 끝에 있는 '#' 제거
+SELECT TRIM(BOTH '#' FROM '#       Do it! MySQL       #');
+-- BOTH: 왼쪽과 오른쪽의 접두사(여기서 #)를 제거하는 명령문
+-- TRIM 함수의 문자 제거 기능은 LTRIM, RTRIM 함수들에는 없음.
+-- 대신, 이 쿼리에서 BOTH 대신 LEADING을 입력하면 왼쪽 문자가, 
+-- TRAILING을 입력하면 오른쪽 문자가 제거됨
+
+SELECT TRIM(LEADING '#' FROM '#       Do it! MySQL       #');
+SELECT TRIM(TRAILING '#' FROM '#       Do it! MySQL       #');
