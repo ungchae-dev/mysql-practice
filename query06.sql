@@ -206,3 +206,27 @@ SELECT TRIM(BOTH '#' FROM '#       Do it! MySQL       #');
 
 SELECT TRIM(LEADING '#' FROM '#       Do it! MySQL       #');
 SELECT TRIM(TRAILING '#' FROM '#       Do it! MySQL       #');
+
+-- 문자열 크기 또는 개수를 반환하는 함수 - LENGTH, CHAR_LENGTH
+-- LENGTH 함수는 문자열의 크기로 바이트를 반환함
+
+-- LENGTH 함수로 문자열의 크기 반환
+SELECT LENGTH('Do it! MySQL'), LENGTH('두잇 마이에스큐엘');
+
+-- LENGTH 함수로 다양한 문자의 크기 반환
+SELECT LENGTH('A'), LENGTH('강'), LENGTH('漢'), LENGTH('◁'), LENGTH(' ');
+-- 영어 및 공백은 1byte, 한글·한자·특수문자는 3byte를 사용함
+
+-- byte 크기로는 문자열의 개수를 정확히 알기 어렵기 때문에
+-- 문자열 개수를 확인하고 싶다면 CHAR_LENGTH 함수를 사용함
+
+-- CHAR_LENGTH 함수로 문자열의 개수 반환
+SELECT CHAR_LENGTH('Do it! MySQL'), CHAR_LENGTH('두잇 마이에스큐엘');
+-- 'Do it! MySQL'의 문자열 개수: 띄어쓰기를 포함해 12를 반환
+-- '두잇 마이에스큐엘' 문자열 개수: 9를 반환
+
+-- LENGTH와 CHAR_LENGTH 함수에는 문자열 대신 열 이름(column name)을 인수로 전달할 수 있음.
+-- LENGTH와 CHAR_LENGTH 함수에 열 이름 전달
+SELECT first_name, LENGTH(first_name), CHAR_LENGTH(first_name)
+FROM customer;
+-- 열 이름을 넣어 실행하면 각 행에 저장된 문자열의 크기와 개수를 반환함을 알 수 있음
