@@ -230,3 +230,35 @@ SELECT CHAR_LENGTH('Do it! MySQL'), CHAR_LENGTH('두잇 마이에스큐엘');
 SELECT first_name, LENGTH(first_name), CHAR_LENGTH(first_name)
 FROM customer;
 -- 열 이름을 넣어 실행하면 각 행에 저장된 문자열의 크기와 개수를 반환함을 알 수 있음
+
+-- 특정 문자까지의 문자열 길이를 반환하는 함수 - POSITION
+-- POSITION 함수로 특정 문자(!)까지의 크기 반환
+SELECT 'Do it!! MySQL', POSITION('!' IN 'Do it!! MySQL');
+-- 1번째 느낌표까지 문자열 길이 6을 반환함
+
+-- POSITION 함수는 지정한 문자가 탐색 대상이 되는 문자열에 존재하지 않으면 0을 반환하고, 
+-- 찾을 대상인 문자열이 NULL인 경우 NULL을 반환함
+SELECT 'Do it!! MySQL', POSITION('#' IN 'Do it!! MySQL');
+
+-- 지정한 길이만큼 문자열을 반환하는 함수 - LEFT, RIGHT
+-- LEFT 함수: 문자열의 왼쪽부터 정의한 위치만큼의 문자열을 반환
+-- RIGHT 함수: 문자열의 오른쪽부터 정의한 위치만큼의 문자열을 반환
+-- 아래와 같이 'DoitSQL'이라는 문장이 있다면 문자열을 셀 때 시작값은 1이 됨.
+-- [1][2][3][4][5][6][7]
+--  D  o  i  t  S  Q  L
+
+-- LEFT와 RIGHT 함수로 왼쪽과 오른쪽 2개의 문자열 반환
+SELECT 'Do it! MySQL', LEFT('Do it! MySQL', 2), RIGHT('Do it! MySQL', 2);
+
+-- 지정한 범위의 문자열을 반환하는 함수 - SUBSTRING
+-- SUBSTRING 함수는 지정한 범위의 문자열을 반환하며,
+-- 함수의 2번째 인자에 시작 위치를,
+-- 3번째 인자에 시작 위치로부터 반환할 문자열 개수를 입력함
+
+-- SUBSTRING 함수로 지정한 범위의 문자열 반환 (4번째 문자부터 문자 2개를 반환)
+SELECT 'Do it! MySQL', SUBSTRING('Do it! MySQL', 4, 2);
+
+-- SUBSTRING 함수도 열 이름을 인수로 전달해 사용할 수 있음
+-- SUBSTRING 함수에 열 이름 전달 (first_name 열에 저장된 데이터의 2번째 문자부터 문자 3개를 반환)
+SELECT first_name, SUBSTRING(first_name, 2, 3) 
+FROM customer;
