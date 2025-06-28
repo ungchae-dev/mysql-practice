@@ -302,3 +302,37 @@ FROM customer;
 
 SELECT CONCAT(first_name, ' ', last_name)
 FROM customer;
+
+-- 문자열을 역순으로 출력하는 함수 - REVERSE
+-- REVERSE: 문자열을 거꾸로 정렬하는 함수
+-- 예를 들어, 다양한 문자열 함수와 혼합해 이메일에서 도메인의 자릿수나 IP 대역을 구할 때 등
+-- 다양하게 활용할 수 있음
+
+-- REVERSE 함수로 문자열을 역순으로 반환
+SELECT 'Do it! MySQL', REVERSE('Do it! MySQL');
+
+-- CTE를 활용해 REVERSE 함수와 다른 여러 함수(POSITION, CHAR_LENGTH, SUBSTRING)의 조합으로
+-- IP 주소의 3번째 부분까지의 정보만 조회하는 쿼리
+WITH ip_list (ip)
+AS (
+	SELECT '192.168.0.1' UNION ALL
+    SELECT '10.6.100.99' UNION ALL
+    SELECT '8.8.8.8' UNION ALL
+    SELECT '192.200.212.113'
+)
+SELECT ip, SUBSTRING(ip, 1, CHAR_LENGTH(ip) - POSITION('.' IN REVERSE(ip)))
+FROM ip_list;
+-- 1) CHAR_LENGTH(ip) 함수를 사용해 IP 열에 대한 전체 길이를 구한 뒤
+-- 2) POSITION('.' IN REVERSE(ip)) 함수를 사용해 IP 열에 대해 
+-- 뒤에서부터 가장 먼저 나오는 .(점)까지의 길이를 구함
+-- 3) SUBSTRING에서 IP 전체 길이에서 1부터 시작해 POSITION 길이를 뺀 만큼 문자열을 출력함.
+
+-- 문자열을 비교하는 함수 - STRCMP
+-- STRCMP: 두 문자열을 비교해 같은지 알려주는 함수
+-- 비교하는 문자열이 같을 경우 0을, 다를 경우 1을 반환함
+
+-- STRCMP 함수로 두 문자열의 비교: (1)동일한 경우
+SELECT STRCMP('Do it! MySQL', 'Do it! MySQL');
+
+-- STRCMP 함수로 두 문자열의 비교: (2)동일하지 않은 경우
+SELECT STRCMP('Do it! MySQL', 'D0 it! MySQL');
