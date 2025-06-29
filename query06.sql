@@ -541,3 +541,27 @@ SELECT MIN(amount), MAX(amount) FROM payment;
 SELECT customer_id, MIN(amount), MAX(amount) 
 FROM payment 
 GROUP BY customer_id;
+
+-- 부분합과 총합을 구하는 함수 - ROLLUP
+-- 데이터의 부분합과 총합을 구하고 싶다면?
+-- GROUP BY 문과 ROLLUP 함수를 조합하면 OK.
+-- GROUP BY [열 이름] WITH ROLLUP 으로
+-- 입력한 열을 기준으로 오른쪽에서 왼쪽으로 이동하며 부분합과 총합을 구하는 방식.
+
+-- ROLLUP 함수로 부분합 계산
+SELECT customer_id, staff_id, SUM(amount) 
+FROM payment 
+GROUP BY customer_id, staff_id WITH ROLLUP;
+-- 실행 결과: customer_id와 staff_id 열을 그룹화한 것의 부분합인 것을 알 수 있음
+-- ex) 3행: customer_id: 1, staff_id 열에 속한 데이터의 총합인 것
+-- 마지막 행: customer_id와 staff_id 모두 NULL인 행의 전체 총합
+-- ROLLUP 사용 시 GROUP BY 뒤의 순서에 따라 계층화 부분도 달라지므로
+-- 계층화해서 합계를 보려면 열 순서를 잘 정할 수 있어야 함.
+
+-- 데이터의 표준편차(standard deviation)를 구하는 함수 - STDDEV, STDDEV_SAMP
+-- STDDEV: 모든 값에 대한 표준편차를 구하는 함수
+-- STDDEV_SAMP: 표본(sample)에 대한 표준편차를 구하는 함수
+
+-- STDDEV와 STDDEV_SAMP 함수로 표준편차 계산
+SELECT STDDEV(amount), STDDEV_SAMP(amount)
+FROM payment;
