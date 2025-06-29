@@ -516,3 +516,28 @@ SELECT SUM(col_1) FROM doit_overflow;
 -- int의 범위는 -2,147,483,648 ~ 2,147,483,647 이다.
 -- col_1 열의 데이터를 합산한 결과가 30억을 넘어 overflow가 발생해야 정상이지만, 
 -- MySQL에서는 암시적 형 변환으로 DECIMAL이나 BIGINT로 합산한 결과를 반환한다.
+
+-- 데이터의 평균을 구하는 함수 - AVG
+-- AVG: 데이터들의 평균을 구할 때 사용하는 함수
+-- AVG 함수는 NULL을 무시함.
+
+-- AVG 함수로 payment 테이블의 amount 열의 데이터 평균 계산
+SELECT AVG(amount) FROM payment;
+-- 결과를 통해 알 수 있는 것?
+-- AVG 함수의 인자로 열 이름을 넣으면 그 열에 있는 숫자 데이터의 평균을 계산한 결과를 얻을 수 있음
+
+-- AVG 함수와 GROUP BY절 조합
+SELECT customer_id, AVG(amount) 
+FROM payment 
+GROUP BY customer_id;
+
+-- 최솟값이나 최댓값을 구하는 함수 - MIN, MAX
+-- MIN과 MAX 함수로 payment 테이블의 amount 열의 최솟값과 최댓값 조회
+SELECT MIN(amount), MAX(amount) FROM payment;
+-- MIN, MAX 함수는 DISTINCT와 조합할 수 있지만, 최솟값과 최댓값 자체가 전체 데이터에서 1개만 잇는 값이므로
+-- 오히려 DISTINCT를 쓰는 게 의미가 없음.
+
+-- MIN과 MAX 함수와 GROUP BY절 조합
+SELECT customer_id, MIN(amount), MAX(amount) 
+FROM payment 
+GROUP BY customer_id;
