@@ -382,3 +382,67 @@ SELECT NOW(), DATE_SUB(NOW(), INTERVAL -1 YEAR); -- -(-1 YEAR) == +1 YEAR이 되
 -- • YEAR: 년 • QUARTER: 분기 • MONTH: 월 
 -- • DAY: 일 • WEEK: 주 • HOUR: 시간 
 -- • MINUTE: 분 • SECOND: 초 • MICROSECOND: 마이크로초 
+
+-- 날짜 간 차이를 구하는 함수 - DATEDIFF, TIMESTAMPDIFF
+-- DATEDIFF: 날짜 간 시간 차이를 구할 수 있는 함수
+-- 시작 날짜, 종료 날짜를 인자로 받음. 함수 실행 결과의 기본값: 인수를 반환하는 것
+-- TIMESTAMPDIFF: 일(DAY) 수가 아닌 년 또는 시간 등 다양한 단위로 확인하고 싶을 때 사용하는 함수
+
+-- DATEDIFF 함수로 날짜 간의 일수 차 반환
+SELECT NOW();
+SELECT DATEDIFF('2025-12-31 23:59:59.9999999', '2025-01-01 00:00:00.0000000');
+-- 2025년 12월 31일에서 2025년 01월 01일까지의 일수 차이는 365일로 출력됨
+
+-- TIMESTAMPDIFF 함수로 날짜 간의 개월 수 차 반환
+SELECT TIMESTAMPDIFF(MONTH, '2025-12-31 23:59:59.9999999', '2025-01-01 00:00:00.0000000');
+-- 2025년 12월 31일에서 2025년 01월 01일까지의 개월 수 차이는 12개월로 출력됨
+SELECT TIMESTAMPDIFF(YEAR, '2025-12-31 23:59:59.9999999', '2025-01-01 00:00:00.0000000'); -- 년(YEAR) 차이
+SELECT TIMESTAMPDIFF(QUARTER, '2025-12-31 23:59:59.9999999', '2025-01-01 00:00:00.0000000'); -- 분기(QUARTER) 차이
+
+-- 지정한 날짜의 요일을 반환하는 함수 - DAYNAME
+-- DAYNAME 함수로 특정 날짜의 요일 반환
+SELECT DAYNAME(NOW()); 
+
+-- 날짜에서 년, 월, 주, 일을 값으로 가져오는 함수 - YEAR, MONTH, WEEK, DAY
+-- YEAR: 날짜 데이터에서 년을 가져오는 함수
+-- MONTH: 날짜 데이터에서 월을 가져오는 함수
+-- WEEK: 날짜 데이터에서 주를 가져오는 함수
+-- DAY: 날짜 데이터에서 일을 가져오는 함수
+
+-- YEAR, MONTH, WEEK, DAY 함수로 년, 월, 주, 일을 별도의 값으로 반환
+SELECT
+	YEAR(NOW()), 
+    MONTH(NOW()), 
+    WEEK(NOW()), -- WEEK 함수: 해당 날짜가 1년 중 몇 번째 주에 해당하는지를 반환
+    DAY(NOW());
+    
+-- 날짜 형식을 변환하는 함수 - DATE_FORMAT, GET_FORMAT
+-- DATE_FORMAT: 날짜를 다양한 형식으로 표현해야할 때 사용하는 함수
+-- 나라마다 날짜를 표현하는 방식이 다르므로 날짜 형식으로 변환해야할 때 필요
+
+-- DATE_FORMAT 함수로 미국에서 사용하는 날짜 형식으로 변경
+SELECT DATE_FORMAT(NOW(), '%m/%d/%Y');
+-- DATE_FORMAT 함수를 통해 미국식으로 월(MONTH), 일(DAY), 년(YEAR) 순으로 날짜가 출력되도록 변경
+
+-- '%m/%d/%Y' 외에도 다양한 조합으로 원하는 날짜 형식으로 결과 출력이 가능함.
+-- 다양한 날짜 형식 변환의 예)
+SELECT DATE_FORMAT(NOW(), '%Y%m%d'); -- 년, 월, 일 (YEAR, month, day)
+SELECT DATE_FORMAT(NOW(), '%Y.%m.%d'); -- 날짜 구분자를 변경하여 출력
+SELECT DATE_FORMAT(NOW(), '%H:%i:%s'); -- 지정한 날짜의 시, 분, 초(HOUR, minute, second)
+
+-- 일부 국가에서는 년, 월, 일 (YEAR, MONTH, DAY) 순서를 다르게 사용하는데
+-- 일일이 각 국가나 지역별 표준 날짜 형식을 모두 알기는 어렵기 때문에 이를 해결하기 위해 
+-- 국가나 지역별 날짜 형식이 어떤지 알기 위해 사용하는 함수가 GET_FORMAT이다.
+
+-- GET_FORMAT 함수로 국가나 지역별 날짜 형식 확인
+SELECT GET_FORMAT(DATE, 'USA') AS USA, -- 미국
+	GET_FORMAT(DATE, 'JIS') AS JIS, -- 일본 산업 표준
+    GET_FORMAT(DATE, 'EUR') AS Europe, -- 유럽
+    GET_FORMAT(DATE, 'ISO') AS ISO, -- 국제 표준화 기구
+    GET_FORMAT(DATE, 'INTERVAL') AS `INTERVAL`; -- 내부 형식
+
+SELECT DATE_FORMAT(NOW(), GET_FORMAT(DATE, 'USA')) AS USA, 
+	DATE_FORMAT(NOW(), GET_FORMAT(DATE, 'JIS')) AS JIS, 
+    DATE_FORMAT(NOW(), GET_FORMAT(DATE, 'EUR')) AS Europe, 
+    DATE_FORMAT(NOW(), GET_FORMAT(DATE, 'ISO')) AS ISO;
+-- (1) GET_FORMAT 함수로 날짜 형식을 불러온 뒤, (2) 그 형식에 따라 날짜를 출력한 것.
