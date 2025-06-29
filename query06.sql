@@ -361,3 +361,24 @@ SELECT CURRENT_DATE(), CURRENT_TIME(3), CURRENT_TIMESTAMP(3), NOW(3);
 
 -- UTC_DATE, UTC_TIME, UTC_TIMESTAMP 함수로 세계 표준 날짜나 시간 반환
 SELECT CURRENT_TIMESTAMP(3), UTC_DATE(), UTC_TIME(3), UTC_TIMESTAMP(3);
+
+-- 날짜를 더하거나 빼는 함수 - DATE_ADD, DATE_SUB
+-- DATE_ADD: 날짜를 더하거나 뺄 때 사용하는 함수
+-- 1번째 인자로 날짜 데이터를 입력, 2번째 인자로 INTERVAL과 함께 더하거나 빼려는 숫자와 년, 월, 일 등 단위를 삽입
+
+-- DATE_ADD 함수로 1년 증가한 날짜 반환
+SELECT NOW(), DATE_ADD(NOW(), INTERVAL 1 YEAR);
+
+-- DATE_ADD 함수로 1년 감소한 날짜 반환
+SELECT NOW(), DATE_ADD(NOW(), INTERVAL -1 YEAR);
+
+-- 날짜를 뺄 때, DATE_ADD 함수 대신 DATE_SUB 함수를 사용할 수 있음.
+-- ※ 단, DATE_SUB 함수 사용 시, 빼는 숫자는 '양수(+)'로 입력할 것.
+-- 음수(-) 입력 시 오히려 날짜를 더하게 됨
+SELECT NOW(), DATE_SUB(NOW(), INTERVAL 1 YEAR);
+SELECT NOW(), DATE_SUB(NOW(), INTERVAL -1 YEAR); -- -(-1 YEAR) == +1 YEAR이 되는 셈
+
+-- DATE_ADD 함수에서 더하거나 빼는 숫자와 함께 사용하는 단위들:
+-- • YEAR: 년 • QUARTER: 분기 • MONTH: 월 
+-- • DAY: 일 • WEEK: 주 • HOUR: 시간 
+-- • MINUTE: 분 • SECOND: 초 • MICROSECOND: 마이크로초 
