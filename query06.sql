@@ -446,3 +446,44 @@ SELECT DATE_FORMAT(NOW(), GET_FORMAT(DATE, 'USA')) AS USA,
     DATE_FORMAT(NOW(), GET_FORMAT(DATE, 'EUR')) AS Europe, 
     DATE_FORMAT(NOW(), GET_FORMAT(DATE, 'ISO')) AS ISO;
 -- (1) GET_FORMAT 함수로 날짜 형식을 불러온 뒤, (2) 그 형식에 따라 날짜를 출력한 것.
+
+-- 6-3. 집계 함수
+-- 집계 함수는 데이터를 그룹화해 계산할 때 자주 사용한다.
+-- ex) 합계, 평균, 최댓값, 최솟값, 중간 합계, 표준편차 함수, ...
+
+-- 조건에 맞는 데이터 개수를 세는 함수 - COUNT
+-- COUNT: 조건에 맞는 데이터의 개수를 셀 때 사용하는 함수
+-- 반환하는 데이터의 범위: BIGINT
+
+USE sakila;
+
+-- COUNT 함수로 customer 테이블의 데이터 개수 집계
+SELECT COUNT(*) FROM customer;
+
+-- COUNT 함수와 GROUP BY 절 조합
+SELECT store_id, COUNT(*) AS cnt
+FROM customer 
+GROUP BY store_id;
+
+-- COUNT 함수와 GROUP BY문 조합: 열 2개 활용
+SELECT store_id, active, COUNT(*) AS cnt
+FROM customer
+GROUP BY store_id, active;
+
+-- COUNT 함수 사용 시 주의할 점?
+-- ※ COUNT 함수에 전체 열이 아닌 특정 열만 지정하여 집계할 경우 해당 열에 있는 NULL 값은 제외한다.
+-- => 전체 데이터 개수와 COUNT 함수로 얻은 데이터 개수는 다를 수 있음
+
+-- NULL을 제외한 집계 확인
+SELECT COUNT(*) AS all_cnt, 
+	COUNT(address2) AS ex_null 
+FROM address;
+
+-- COUNT 함수와 DISTINCT 조합
+-- COUNT 함수 사용 시 DISTINCT를 조합해 중복된 값을 제외한 데이터 개수를 집계할 수 있음
+
+-- COUNT 함수와 DISTINCT문 조합
+SELECT COUNT(*), COUNT(store_id), COUNT(DISTINCT store_id)
+FROM customer;
+-- store_id 열에 1과 2 데이터가 중복되어 있기 때문에
+-- DISTINCT store_id로 중복 데이터를 제외하여 조회한 뒤 COUNT 함수로 행 개수 2를 반환한 것.
