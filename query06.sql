@@ -336,3 +336,28 @@ SELECT STRCMP('Do it! MySQL', 'Do it! MySQL');
 
 -- STRCMP 함수로 두 문자열의 비교: (2)동일하지 않은 경우
 SELECT STRCMP('Do it! MySQL', 'D0 it! MySQL');
+
+
+-- 6-2. 날짜 함수
+-- 같은 년, 월, 일, 요일 등 조건에 따라 데이터를 검색할 때
+-- 날짜 함수를 사용하면 편리한 점이 많다.
+
+-- 서버의 현재 날짜나 시간을 반환하는 다양한 함수
+-- CURRENT_DATE: 접속 중인 데이터베이스 서버의 현재 날짜를 확인할 때 사용하는 함수
+-- CURRENT_TIME: 시간을 알고 싶을 때 사용하는 함수
+-- CURRENT_TIMESTAMP: 날짜와 시간을 합쳐 확인하고 싶을 때 사용하는 함수
+
+-- 날짜 함수로 현재 날짜나 시간 반환
+SELECT CURRENT_DATE(), CURRENT_TIME(), CURRENT_TIMESTAMP(), NOW();
+
+-- ms, µs (밀리초, 마이크로초)와 같이 정밀한 시각을 반환
+SELECT CURRENT_DATE(), CURRENT_TIME(3), CURRENT_TIMESTAMP(3), NOW(3);
+-- 시간을 반환하는 함수에 인수로 3을 입력: 밀리초 (ms) 단위까지 출력하도록 요청
+
+-- UTC(Universal Time Coordinated): 세계 표준 시간, 국제 표준 시간의 기준으로 쓰이는 시각
+-- UTC_DATE: 현재 접속 중인 데이터베이스 서버의 UTC 날짜를 확인하는 함수
+-- UTC_TIME: UTC 시간을 확인하는 함수
+-- UTC_TIMESTAMP: 날짜와 시간을 함께 확인하는 함수
+
+-- UTC_DATE, UTC_TIME, UTC_TIMESTAMP 함수로 세계 표준 날짜나 시간 반환
+SELECT CURRENT_TIMESTAMP(3), UTC_DATE(), UTC_TIME(3), UTC_TIMESTAMP(3);
