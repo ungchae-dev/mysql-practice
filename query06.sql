@@ -487,3 +487,32 @@ SELECT COUNT(*), COUNT(store_id), COUNT(DISTINCT store_id)
 FROM customer;
 -- store_id 열에 1과 2 데이터가 중복되어 있기 때문에
 -- DISTINCT store_id로 중복 데이터를 제외하여 조회한 뒤 COUNT 함수로 행 개수 2를 반환한 것.
+
+-- 데이터의 합을 구하는 함수 - SUM
+-- SUM: 모든 행의 값을 합하는 함수. 숫자 데이터를 더할 경우 사용
+-- SUM 함수로 payment 테이블의 amount 열의 데이터 합산
+SELECT SUM(amount) FROM payment;
+SELECT amount FROM payment; -- 확인용
+
+-- SUM 함수와 GROUP BY 절 조합
+SELECT customer_id, SUM(amount)
+FROM payment
+GROUP BY customer_id;
+-- payment 테이블 전체 16044행에서 599개 행이 customer_id로 그룹화되고,
+-- 각 그룹에 해당하는 amount 열의 값이 더해진 결과를 얻을 수 있음.
+
+-- 암시적 형 변환으로 overflow 없이 합산 결과를 반환할 수 있을까?
+CREATE TABLE doit_overflow (
+	col_1 int, 
+    col_2 int, 
+    col_3 int
+);
+
+INSERT INTO doit_overflow VALUES (1000000000, 1000000000, 1000000000); -- col_1 ~ col_3에 각각 10억씩 총 3개 행의 데이터 삽입
+INSERT INTO doit_overflow VALUES (1000000000, 1000000000, 1000000000);
+INSERT INTO doit_overflow VALUES (1000000000, 1000000000, 1000000000);
+
+SELECT SUM(col_1) FROM doit_overflow;
+-- int의 범위는 -2,147,483,648 ~ 2,147,483,647 이다.
+-- col_1 열의 데이터를 합산한 결과가 30억을 넘어 overflow가 발생해야 정상이지만, 
+-- MySQL에서는 암시적 형 변환으로 DECIMAL이나 BIGINT로 합산한 결과를 반환한다.
