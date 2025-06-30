@@ -679,3 +679,54 @@ SELECT EXP(10);
 -- LOG 함수 <=> EXP 함수
 SELECT EXP(LOG(20)), LOG(EXP(20));
 -- 실수 변환에서 반올림 처리의 차이가 있을 뿐 결과는 20으로 같다 볼 수 있음
+
+-- 거듭제곱값을 구하는 함수 - POWER
+-- POWER 함수의 기본 형식
+-- POWER(숫자 또는 수식, 지수)
+-- 1번째 인자: 정수 또는 실수형(float)만 입력받을 수 있음
+-- 2번째 인자: 거듭제곱할 정수 또는 실수를 입력받음
+SELECT POWER(2, 3), POWER(2, 10), POWER(2.0, 3);
+-- 실수를 거듭제곱했는데 결과는 정수로 반환됨을 알 수 있음
+
+-- 제곱근(square root)을 구하는 함수 - SQRT
+-- SQRT 함수의 기본 형식
+-- SQRT(숫자 또는 수식)
+-- 제곱근을 계산할 때 양수를 넣어야 하며, 음수를 넣을 경우 결과가 허수면 NULL이 반환됨.
+
+SELECT SQRT(1.00), SQRT(10.00); -- 1의 제곱근, 10의 제곱근을 반환
+
+-- 난수(random number)를 구하는 함수 - RAND
+-- RAND: 0부터 1사이의 실수형 난수를 반환함.
+
+-- RAND 함수의 기본 형식
+-- RAND(인자)
+-- 인자로 전달하는 값의 데이터 유형: tinyint, smallint, int
+-- 인자를 지정하지 않을 경우, 임의의 초기값을 설정
+
+SELECT RAND(100), RAND(), RAND();
+-- RAND 함수는 같은 결과를 반환함
+
+-- 위 쿼리문을 여러 번 실행해도 RAND(100)이 계속 같은 값을 반환하는 이유는?
+-- 현재 쿼리 창에서 처음 함수를 실행할 때 임의로 정해진 초기값을 계속 재사용하기 때문임.
+
+-- 인자를 설정하지 않은 채로 WHILE문을 사용해 난수를 4회 생성하는 쿼리를 작성해보기
+-- RAND 함수 인자에 아무 것도 전달하지 않으면 DataBase가 설정한 임의의 값으로 난수 종류를 보여주기 때문에
+-- 실행할 때마다 다른 난수를 볼 수 있음.
+-- 또, MySQL에서 WHILE을 사용하려면 스토어드 프로시저를 생성해서 사용해야 한다. 아직 모르는 내용이지만 예습하는 겸 진행해보기.
+
+-- 인수가 없는 RAND 함수로 난수 계산
+DELIMITER $$
+CREATE PROCEDURE rnd()
+BEGIN
+DECLARE counter INT;
+SET counter = 1;
+
+WHILE counter < 5 DO
+	SELECT RAND() Random_Number;
+    SET counter = counter + 1;
+END WHILE;
+
+END $$
+DELIMITER ;
+
+call rnd();
