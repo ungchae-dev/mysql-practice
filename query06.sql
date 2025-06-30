@@ -565,3 +565,30 @@ GROUP BY customer_id, staff_id WITH ROLLUP;
 -- STDDEV와 STDDEV_SAMP 함수로 표준편차 계산
 SELECT STDDEV(amount), STDDEV_SAMP(amount)
 FROM payment;
+
+-- 6-4. 수학 함수
+-- 수학 함수는 대부분 입력값과 같은 데이터 유형으로 값을 반환하지만
+-- LOG, EXP, SQRT 같은 함수는 입력값을 실수형인 float로 자동 변환하고 반환한다.
+
+-- 절댓값(absolute value)을 구하는 함수 - ABS
+-- ABS: 절댓값을 반환하는 함수로 음수(-)나 양수(+)를 입력 시 모두 양수로 반환받음.
+-- ABS 함수의 인자에 숫자가 아닌 수식을 입력해 절댓값을 반환받을 수도 있음
+
+-- ABS 함수에 입력한 숫자를 절댓값으로 반환
+SELECT ABS(-1.0), ABS(0.0), ABS(1.0); -- 음수, 0, 양수 3가지 경우
+
+-- ABS 함수에 입력한 수식의 결과를 절댓값으로 반환
+USE sakila; -- sakila DataBase 사용
+
+SELECT p.amount - p2.amount AS amount,
+	ABS(p.amount - p2.amount) AS abs_amount
+FROM payment AS p
+	INNER JOIN payment AS p2 ON p.payment_id = p2.payment_id -1;
+-- payment 테이블에서 payment_id가 현재보다 -1인 payment_id를 찾아 amount 값을 뺀 결과.
+-- 결과에 따라 음수 또는 양수이지만 ABS 함수로 모두 양수로 결과를 반환함
+
+-- ABS 함수는 자료형의 범위를 넘으면 overflow가 발생하지만
+-- MySQL 서버에선 BIGINT로 암시적 형 변환이 일어나 값이 반환됨.
+
+-- 암시적 형 변환으로 overflow 없이 절댓값을 반환
+SELECT ABS(-2147483648);
