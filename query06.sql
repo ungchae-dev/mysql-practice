@@ -592,3 +592,16 @@ FROM payment AS p
 
 -- 암시적 형 변환으로 overflow 없이 절댓값을 반환
 SELECT ABS(-2147483648);
+
+-- 양수 또는 음수 여부를 판단하는 함수 - SIGN
+-- SIGN 함수는 지정한 값이나 수식 결과값이 양수, 음수, 0인지를 판단하여
+-- 각각 1, -1, 0을 반환함.
+
+-- SIGN 함수로 입력한 숫자가 양수인지 음수인지 0인지를 판단
+SELECT SIGN(-256), SIGN(0), SIGN(256);
+
+-- SIGN 함수의 인자로 수식을 입력해 수식을 계산한 결과가 양수인지 음수인지 0인지를 판단
+SELECT p.amount - p2.amount AS amount,
+	SIGN(p.amount - p2.amount) AS sign_amount
+FROM payment AS p
+	INNER JOIN payment AS p2 ON p.payment_id = p2.payment_id -1;
