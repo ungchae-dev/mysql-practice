@@ -730,3 +730,23 @@ END $$
 DELIMITER ;
 
 call rnd();
+
+-- 삼각함수 - COS, SIN, TAN, ATAN(arctan, 아크탄젠트)
+-- 삼각함수는 여러가지가 있지만 크게 4가지인 SIN, COS, TAN, ATAN 관련 쿼리를 보자.
+-- 모든 삼각함수는 실수형 인자를 받는다.
+
+-- COS 함수 계산
+SELECT COS(14.78);
+
+-- SIN 함수 계산
+SELECT SIN(45.175643);
+
+-- TAN 함수 계산
+SELECT TAN(PI()/2), TAN(.45);
+
+-- ATAN 함수 계산
+SELECT ATAN(45.87) AS atanCalc1, 
+	ATAN(-181.01) AS atanCalc2, 
+    ATAN(0) AS atanCalc3, 
+    ATAN(0.1472738) AS atanCalc4, 
+    ATAN(197.1099392) AS atanCalc5;
