@@ -750,3 +750,53 @@ SELECT ATAN(45.87) AS atanCalc1,
     ATAN(0) AS atanCalc3, 
     ATAN(0.1472738) AS atanCalc4, 
     ATAN(197.1099392) AS atanCalc5;
+
+-- 6-5. 순위 함수
+-- 순위 함수: 조회 결과에 순위를 부여하는 함수
+-- MySQL에서 제공하는 순위 함수: ROW_NUMBER, RANK, DENSE_RANK, NTILE, ...
+-- 순위 함수는 1) 전체 데이터에 순위를 부여할 수 있음
+-- 2) PARTITION 옵션을 함께 사용해 사용자가 설정한 그룹에 따라 그룹 내에서만 순위를 부여할 수도 있음.
+
+-- 유일한 값으로 순위를 부여하는 함수 - ROW_NUMBER
+-- ROW_NUMBER: 모든 행에 유일한 값으로 순위를 부여하는 함수
+-- 함수를 실행한 결과에 같은 순위는 없음. 만약 같은 순위라면 정렬 순서에 따라 순위를 다르게 부여하여 반환함.
+
+-- ROW_NUMBER 함수의 기본 형식
+-- ROW_NUMBER() OVER([PARTITION BY 열] ORDER BY 열)
+
+USE sakila; -- sakila DataBase 사용
+
+-- ROW_NUMBER 함수로 순위 부여
+SELECT ROW_NUMBER() OVER(ORDER BY amount DESC) AS num, customer_id, amount
+FROM (
+	SELECT customer_id, SUM(amount) AS amount
+    FROM payment
+    GROUP BY customer_id
+) AS x;
+-- 실행 결과: amount 값이 클수록 순위가 높음.
+-- num = 4, 5위를 보면 amount값이 같음에도 순위가 다른데
+-- 여기선 customer_id의 숫자가 작을수록 더 높은 우선순위를 부여받는 걸 알 수 있음.
+
+-- 만약 동점에 대해 순위를 MySQL이 임의로 부여하지 않게 하기위해 ORDER BY 절에 정렬 조건 추가하기
+SELECT ROW_NUMBER() OVER(ORDER BY amount DESC, customer_id DESC) AS num,
+	customer_id, amount
+FROM (
+	SELECT customer_id, SUM(amount) AS amount
+    FROM payment
+    GROUP BY customer_id
+) AS x;
+
+-- 전체 데이터가 아닌 그룹별로 순위를 부여해야 할 때가 있는데, 
+-- 예를 들면 1) 전교생을 대상으로 석차를 구할 때, 2) 학년별 석차를 구할 때를
+-- 생각하면 된다. 그룹별 순위를 부여하려면 PARTITION 절을 사용해야 한다.
+
+-- PARTITION BY 절로 그룹별 순위 부여
+SELECT staff_id, 
+	ROW_NUMBER() OVER(PARTITION BY staff_id ORDER BY amount DESC, customer_id ASC) AS num, 
+    customer_id,
+    amount
+FROM (
+	SELECT customer_id, staff_id, SUM(amount) AS amount
+    FROM payment
+    GROUP BY customer_id, staff_id
+) AS x;
