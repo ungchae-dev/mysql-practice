@@ -949,3 +949,35 @@ ORDER BY x.amount DESC;
 -- 맨 첫 번째 데이터는 무조건 0이 반환되며
 -- 이후 내림차순한 데이터에 따라 상위 분포를 나타냄.
 -- 맨 마지막 행은 1을 반환
+
+-- 그룹의 정렬된 데이터에서 첫번째 행 또는 마지막 행을 반환하는 함수 - FIRST_VALUE, LAST_VALUE
+-- FIRST_VALUE와 LAST_VALUE 함수는 그룹에서 첫 행이나 마지막 행의 값을 구해 데이터를 비교할 경우 많이 사용함.
+-- ex) 첫 행에 있는 날짜와 매출을 기준으로 지금까지의 매출 변화를 확인하는 경우에 사용 가능
+
+-- FIRST_VALUE와 LAST_VALUE의 기본 형식
+-- FIRST VALUE(열) OVER([PARTITION BY 열] ORDER BY 열)
+-- LAST_VALUE(열) OVER([PARTITION BY 열] ORDER BY 열)
+
+-- payment 테이블에서 각 일자별로 amount 합계를 구한 뒤
+-- payment_id 열을 기준으로 오름차순 정렬하여 
+-- FIRST_VALUE 함수로 가장 낮은 일자에 대한 amount 값을 구하고, 
+-- LAST_VALUE 함수로 가장 높은 일자에 대한 amount 값 구하기
+-- 그리고 FIRST_VALUE 값과 현재 값의 차이가 얼마인지 조회하기
+SELECT x.payment_date, x.amount, 
+	FIRST_VALUE(x.amount) OVER(ORDER BY x.payment_date) AS f_value, 
+    LAST_VALUE(x.amount) OVER(ORDER BY x.payment_date 
+		RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS l_value, 
+	x.amount - FIRST_VALUE(x.amount) OVER(ORDER BY x.payment_date) AS increase_amount
+FROM (
+	SELECT DATE_FORMAT(payment_date, '%y-%m-%d') AS payment_date, 
+		SUM(amount) AS amount
+	FROM payment 
+    GROUP BY DATE_FORMAT(payment_date, '%y-%m-%d')
+) AS x
+ORDER BY x.payment_date;
+-- 실행 결과: 날짜를 나타내는 payment_date 열을 기준으로 오름차순해서
+-- 첫 행의 amount 값(29.92)을 찾은 뒤, 각 일자별 amount 값의 차이를 보여줌
+-- 특정 행 기준으로 데이터를 비교하고 싶을 때 이런 쿼리를 사용함.
+
+-- LAST_VALUE 함수 쪽에 윈도우 함수 'RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING'을 사용한 이유는?
+-- 윈도우 함수를 사용하지 않으면 LAST_VALUE 함수로 정확한 결과를 얻을 수 없기 때문임.
