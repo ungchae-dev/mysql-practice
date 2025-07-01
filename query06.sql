@@ -903,3 +903,49 @@ ORDER BY x.payment_date;
 -- amount 열을 기준으로
 -- lag_amount 열에서 반환하는 데이터는 이전 2행의 데이터이고,
 -- lead_amount 열에서 반환하는 데이터는 이후 2행의 데이터임을 알 수 있음.
+
+-- 누적 분포(Cumulative Distribution)를 계산하는 함수 - CUME_DIST
+-- CUME_DIST: 그룹 내에서 누적 분포를 계산하는 함수
+-- 그룹에서 데이터 값이 포함되는 위치의 누적 분포를 계산함.
+-- CUME_DIST 함수의 기본 형식
+-- CUME_DIST() OVER([PARTITION BY 열] ORDER BY 열)
+
+-- CUME_DIST 함수: 0 초과 ~ 1 이하의 값을 반환함.
+-- 같은 값은 항상 같은 누적 분포값으로 계산하며, 기본적으로 NULL값을 포함하며
+-- NULL값은 해당 데이터 집합에서 가장 낮은 값으로 취급함
+
+-- CUME_DIST 함수로 payment 테이블의 amount 열의 누적 분포값 계산하기
+SELECT x.customer_id, x.amount, CUME_DIST() OVER(ORDER BY x.amount DESC) 
+FROM (
+	SELECT customer_id, SUM(amount) AS amount
+    FROM payment
+    GROUP BY customer_id
+) AS x 
+ORDER BY x.amount DESC;
+-- 실행 결과 amount 열의 데이터를 내림차순으로 정렬한 뒤 누적 분포를 계산한 것.
+-- amount 열에서 가장 높은 customer_id = 526의 amount 합계 값이 전체 데이터 중 상위 0.0016 
+-- 즉, 상위 0.16%의 누적 분포 값을 갖고 있음.
+-- ... 마지막 행 customer_id = 248은 누적 분포 1을 반환함.
+
+-- 상대 순위를 계산하는 함수 - PERCENT_RANK
+-- PERCENT_RANK: 지정한 그룹 또는 쿼리 결과로 이루어진 그룹 내의 상대 순위를 계산할 수 있는 함수
+-- CUME_DIST 함수와 비슷하지만 누적 분포가 아닌 '분포 순위'임.
+
+-- PERCENT_RANK 함수의 기본 형식
+-- PERCENT_RANK() OVER([PARTITION BY 열] ORDER BY 열)
+-- 함수의 반환값 범위: 0 이상 ~ 1 이하 (데이터 집합에서 1번째 행은 0부터 시작, 마지막 값은 1)
+-- PERCENT_RANK 함수에서 NULL은 해당 데이터 그룹에서 가장 낮은 값으로 취급되며, 
+-- 상위 분포 순위를 계산할 때 하나의 데이터로 간주됨
+
+-- PERCENT_RANK 함수로 상위 분포 순위를 계산
+SELECT x.customer_id, x.amount, PERCENT_RANK() OVER(ORDER BY x.amount DESC)
+FROM (
+	SELECT customer_id, SUM(amount) AS amount
+    FROM payment
+    GROUP BY customer_id
+) AS x
+ORDER BY x.amount DESC;
+-- 실행 결과 amount 열의 데이터를 내림차순하여 높은 값이 상위 몇 퍼센트인지 계산하여 보여줌.
+-- 맨 첫 번째 데이터는 무조건 0이 반환되며
+-- 이후 내림차순한 데이터에 따라 상위 분포를 나타냄.
+-- 맨 마지막 행은 1을 반환
