@@ -800,3 +800,61 @@ FROM (
     FROM payment
     GROUP BY customer_id, staff_id
 ) AS x;
+
+-- 우선순위를 고려하지 않고 순위를 부여하는 함수 - RANK
+-- RANK 함수: 우선순위를 따지지 않고 같은 순위를 부여한다는 점이 ROW_NUMBER 함수와는 다른 점.
+
+-- RANK 함수의 기본 형식
+-- RANK() OVER([PARTITION BY 열] ORDER BY 열)
+-- 1) OVER(ORDER BY 열)을 명시해 해당 열을 기준으로 오름차순이나 내림차순으로 해당 열 데이터의 순위를 부여하고
+-- 2) 데이터 그룹별 순위를 부여하고 싶다면 PARTITION BY 열 옵션을 사용함.
+
+-- payment 테이블에서 amount 열을 내림차순 정렬하여 RANK 함수로 순위 부여하기
+SELECT RANK() OVER(ORDER BY amount DESC) AS num, customer_id, amount
+FROM (
+	SELECT customer_id, SUM(amount) AS amount
+    FROM payment
+    GROUP BY customer_id
+) AS x;
+-- num = 4, 5의 경우 amount 값이 같은 경우로, 같은 순위를 부여했다.
+-- 공동 순위가 있으면 그 다음 순위는 같은 순위에 있는 데이터 개수만큼 건너뛴 순위가 부여되므로
+-- 여기서 4위 다음 6위가 매겨진 걸 알 수 있음.
+-- ex) 1위가 3개면 그 다음 순위는 2가 아닌 4가 되는 식임.
+
+-- 건너뛰지 않고 순위를 부여하는 함수 - DENSE_RANK
+-- DENSE_RANK: RANK 함수와 달리 같은 순위에 있는 데이터 개수를 무시하고 순위를 매김.
+-- ex) 1위가 3개여도 그 다음 순위가 2가 되는 식.
+
+-- DENSE_RANK 함수의 기본 형식
+-- DENSE_RANK() OVER([PARTITION BY 열] ORDER BY 열)
+
+-- payment 테이블에서 amount 열을 내림차순 정렬하여 DENSE_RANK 함수로 순위를 부여하기
+SELECT DENSE_RANK() OVER(ORDER BY amount DESC) AS num, 
+	customer_id, 
+    amount
+FROM (
+	SELECT customer_id, SUM(amount) AS amount
+    FROM payment
+    GROUP BY customer_id
+) AS x;
+
+-- 그룹 순위를 부여하는 함수 - NTILE
+-- NTILE: 인자로 지정한 개수만큼 데이터 행을 그룹화한 뒤
+-- 각 그룹에 순위를 부여함. 각 그룹은 1부터 순위가 매겨지고, 이 순위는 각 행의 순위가 아닌 '행이 속한 그룹의 순위'임.
+
+-- NTILE 함수의 기본 형식
+-- NTILE(정수) OVER([PARTITION BY 열] ORDER BY 열)
+
+-- 내림차순으로 정렬한 결과에 NTILE 함수로 순위 부여
+SELECT NTILE(100) OVER(ORDER BY amount DESC) AS num, 
+	customer_id, 
+	amount
+FROM (
+	SELECT customer_id, SUM(amount) AS amount
+    FROM payment
+    GROUP BY customer_id
+) AS x;
+-- 실행 결과: 전체 행을 100개의 그룹으로 쪼갠 뒤,
+-- 각 행마다 속한 그룹의 순위를 부여한 것을 알 수 있음.
+-- NTILE 함수는 전체 행을 균등하게 나누어서 
+-- 1순위 그룹, 2순위 그룹에 차등으로 혜택을 지급할 때 활용하기 좋은 함수다.
