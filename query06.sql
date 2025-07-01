@@ -858,3 +858,48 @@ FROM (
 -- 각 행마다 속한 그룹의 순위를 부여한 것을 알 수 있음.
 -- NTILE 함수는 전체 행을 균등하게 나누어서 
 -- 1순위 그룹, 2순위 그룹에 차등으로 혜택을 지급할 때 활용하기 좋은 함수다.
+
+-- 6-6. 분석 함수
+-- 분석 함수: 데이터 그룹을 기반으로 앞뒤 행을 계산하거나 그룹에 대한 누적 분포, 상대 순위 등을 계산하는 함수
+-- 여러 행을 반환할 수 있음.
+
+-- 앞 또는 뒤 행을 참조하는 함수 - LAG, LEAD
+-- 앞뒤 행을 비교해 데이터 처리를 해야 하는 경우 LAG 또는 LEAD 함수를 사용하면 된다.
+-- 이 함수들을 사용하면 SELF JOIN을 따로 작성하지 않아도 돼 간편하다.
+
+-- LAG와 LEAD 함수의 기본 형식
+-- LAG(또는 LEAD)(열 이름, 참조 위치)
+-- OVER([PARTITION BY 열] ORDER BY 열)
+-- 인자로 참조 위치를 입력하면 기본값: 1 이므로 아무 것도 전달하지 않으면 1칸 앞이나 1칸 뒤의 데이터를 참조함.
+
+-- payment 테이블에서 기준 열 amount를 가운데로 하여 LAG와 LEAD 함수로 앞뒤 행 참조
+SELECT x.payment_date,
+	LAG(x.amount) OVER(ORDER BY x.payment_date ASC) AS lag_amount, 
+    amount,
+    LEAD(x.amount) OVER(ORDER BY x.payment_date ASC) AS lead_amount
+FROM (
+	SELECT DATE_FORMAT(payment_date, '%y-%m-%d') AS payment_date, 
+		SUM(amount) AS amount
+	FROM payment
+    GROUP BY DATE_FORMAT(payment_date, '%y-%m-%d')
+) AS x
+ORDER BY x.payment_date;
+-- amount 열 기준으로 왼쪽: 현재 행의 앞,
+-- 오른쪽: 현재 행의 뒤에 있는 행을 보여줌
+-- 첫 행인 29.92의 경우 앞의 값이 없어서 NULL이 출력됨
+
+-- LAG와 LEAD 함수로 2칸씩 앞뒤 행 참조
+SELECT x.payment_date,
+	LAG(x.amount, 2) OVER(ORDER BY x.payment_date ASC) AS lag_amount, 
+    amount,
+    LEAD(x.amount, 2) OVER(ORDER BY x.payment_date ASC) AS lead_amount
+FROM (
+	SELECT DATE_FORMAT(payment_date, '%y-%m-%d') AS payment_date, 
+		SUM(amount) AS amount
+    FROM payment
+    GROUP BY DATE_FORMAT(payment_date, '%y-%m-%d')
+) AS x 
+ORDER BY x.payment_date;
+-- amount 열을 기준으로
+-- lag_amount 열에서 반환하는 데이터는 이전 2행의 데이터이고,
+-- lead_amount 열에서 반환하는 데이터는 이후 2행의 데이터임을 알 수 있음.
