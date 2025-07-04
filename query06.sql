@@ -1066,3 +1066,32 @@ FROM country;
 SELECT * FROM country;
 SELECT ROUND(LifeExpectancy, 1)
 FROM country;
+
+-- Q16. world 데이터베이스의 country 테이블에서 
+-- LifeExpectancy 열의 값이 높은 순서대로 순위를 부여하되,
+-- 동점일 경우 알파벳순으로 하여 더 높은 순위를 부여하는 쿼리를 작성하세요.
+SELECT 
+	ROW_NUMBER() OVER(ORDER BY LifeExpectancy DESC, Name ASC), -- 알파벳순: Name ASC를 쓴 이유
+	Name, 
+    LifeExpectancy
+FROM country;
+
+-- Q17. world 데이터베이스의 country 테이블에서 
+-- LifeExpectancy 열의 값이 높은 순서대로 순위를 부여하되, 
+-- 동점일 경우 같은 순위를 부여하고, 
+-- 그 다음 순위는 동점 순위 개수만큼 건너 뛰고 다음 순위를 부여하는 쿼리를 작성하세요.
+SELECT 
+	RANK() OVER(ORDER BY LifeExpectancy DESC), 
+    Name, 
+    LifeExpectancy
+FROM country;
+
+-- Q18. world 데이터베이스의 country 테이블에서 
+-- LifeExpectancy 열의 값이 높은 순서대로 순위를 부여하되, 
+-- 동점일 경우 같은 순위를 부여하고,
+-- 그 다음 순위는 동점 순위 개수를 무시하고 바로 다음 순위를 부여하는 쿼리를 작성하세요.
+SELECT
+	DENSE_RANK() OVER(ORDER BY LifeExpectancy DESC),
+    Name, 
+    LifeExpectancy
+FROM country;
