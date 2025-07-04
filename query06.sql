@@ -1019,3 +1019,20 @@ ORDER BY LENGTH(name) DESC;
 -- 조회하는 쿼리를 작성하세요.
 SELECT name, SurfaceArea, POSITION('.' IN SurfaceArea)
 FROM country;
+
+-- Q7. world 데이터베이스의 country 테이블에서 
+-- Name 열의 2번째 문자부터 4개의 문자를 조회하는 쿼리를 작성하세요.
+SELECT name, SUBSTRING(name, 2, 4) FROM country;
+
+-- Q8. world 데이터베이스의 country 테이블에서
+-- Code 열에 있는 A라는 글자를 Z로 변환하는 쿼리를 작성하세요.
+SELECT code, REPLACE(code, 'A', 'Z')
+FROM country;
+
+-- Q9. world 데이터베이스의 country 테이블에서
+-- Code 열에 있는 A를 Z로 변환하고 Z를 10번 반복하여 표시한 결과를 조회하는 쿼리를 작성하세요.
+SELECT 
+	code, 
+	REPLACE(code, 'A', 'Z'), 
+	REPLACE(code, 'A', REPEAT('Z', 10))
+FROM country;
