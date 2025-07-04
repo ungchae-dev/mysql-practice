@@ -1001,3 +1001,21 @@ WHERE IndepYear IS NULL;
 -- 모두 소문자로 조회하도록 쿼리를 작성하세요.
 SELECT UPPER(name), LOWER(name)
 FROM country;
+
+-- Q4. world 데이터베이스의 country 테이블에서 Name 열의 왼쪽, 오른쪽, 양쪽 공백을 제거하고
+-- 데이터를 조회하는 쿼리를 작성하세요.
+SELECT LTRIM(name), RTRIM(name), TRIM(name)
+FROM country;
+
+-- Q5. world 데이터베이스의 country 테이블에서 Name 열의 길이가 20보다 큰 데이터를
+-- 열 길이가 높은 순서로 내림차순으로 정렬하는 쿼리를 작성하세요.
+SELECT 
+	name, LENGTH(name)
+FROM country
+WHERE LENGTH(name) > 20
+ORDER BY LENGTH(name) DESC;
+
+-- Q6. world 데이터베이스의 country 테이블에서 SurfaceArea 열의 소수점 자리까지만
+-- 조회하는 쿼리를 작성하세요.
+SELECT name, SurfaceArea, POSITION('.' IN SurfaceArea)
+FROM country;
