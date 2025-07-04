@@ -1036,3 +1036,13 @@ SELECT
 	REPLACE(code, 'A', 'Z'), 
 	REPLACE(code, 'A', REPEAT('Z', 10))
 FROM country;
+
+-- Q10. 현재 날짜 및 시간에서 24시간을 더하는 쿼리를 작성하세요.
+SELECT NOW();
+SELECT DATE_ADD(NOW(), INTERVAL 24 HOUR);
+
+-- Q11. 현재 날짜 및 시간에서 24시간을 빼는 쿼리를 작성하세요.
+SELECT DATE_SUB(NOW(), INTERVAL 24 HOUR);
+
+-- Q12. 2026년 1월 1일은 어떤 요일인지 조회하는 쿼리를 작성하세요.
+SELECT DAYNAME('2026-01-01');
