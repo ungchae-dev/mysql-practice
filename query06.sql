@@ -981,3 +981,23 @@ ORDER BY x.payment_date;
 
 -- LAST_VALUE 함수 쪽에 윈도우 함수 'RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING'을 사용한 이유는?
 -- 윈도우 함수를 사용하지 않으면 LAST_VALUE 함수로 정확한 결과를 얻을 수 없기 때문임.
+
+
+-- FINAL QUIZ
+-- Q1. world 데이터베이스의 country 테이블에서 Name, Continent, Population 열을
+-- 하나의 열로 만들기 위해 문자열을 연결하고 각 문자열 사이를 구분할 수 있도록 빈칸을 추가해
+-- 그 결과를 조회하는 쿼리를 작성하세요.
+USE world;
+SELECT CONCAT(Name, ' ', Continent, ' ', Population)
+FROM country;
+
+-- Q2. world 데이터베이스의 country 테이블에서 IndepYear 열이 NULL인 데이터를 조회하고
+-- 이러한 NULL을 '데이터 없음'으로 표시하는 쿼리를 작성하세요.
+SELECT name, IFNULL(IndepYear, '데이터 없음') AS IndepYear
+FROM country
+WHERE IndepYear IS NULL;
+
+-- Q3. world 데이터베이스의 country 테이블에서 Name 열을 모두 대문자로 조회하거나
+-- 모두 소문자로 조회하도록 쿼리를 작성하세요.
+SELECT UPPER(name), LOWER(name)
+FROM country;
