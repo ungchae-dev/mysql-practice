@@ -1046,3 +1046,23 @@ SELECT DATE_SUB(NOW(), INTERVAL 24 HOUR);
 
 -- Q12. 2026년 1월 1일은 어떤 요일인지 조회하는 쿼리를 작성하세요.
 SELECT DAYNAME('2026-01-01');
+
+-- Q13. world 데이터베이스의 country 테이블 전체 행 개수를 구하는 쿼리를 작성하세요.
+SELECT COUNT(*) 
+FROM country;
+
+-- Q14. world 데이터베이스의 country 테이블에서
+-- GNP 열의 합, 평균, 최댓값, 최솟값을 구하는 쿼리를 작성하세요.
+SELECT * FROM country;
+SELECT 
+	SUM(GNP), 
+	AVG(GNP),
+    MAX(GNP),
+    MIN(GNP)
+FROM country;
+
+-- Q15. world 데이터베이스의 country 테이블에서 
+-- LifeExpectancy 열을 소수 1번째 자리에서 반올림한 결과를 조회하는 쿼리를 작성하세요.
+SELECT * FROM country;
+SELECT ROUND(LifeExpectancy, 1)
+FROM country;
